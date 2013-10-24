@@ -1,0 +1,5 @@
+Source: https://jersey.java.net/documentation/latest/user-guide.html#preface
+
+Project creation:
+$ mvn archetype:generate -DarchetypeArtifactId=jersey-quickstart-grizzly2 -DarchetypeGroupId=org.glassfish.jersey.archetypes -DinteractiveMode=false -DgroupId=net.nuevegen.dashboard -DartifactId=dashboard -Dpackage=net.nuevegen.dashboard
+
