@@ -2,9 +2,13 @@ package net.nuevegen.dashboard;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+
+import net.nuevegen.dashboard.reports.model.Event;
 
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.junit.After;
@@ -42,7 +46,7 @@ public class ReportsTest {
      */
     @Test
     public void testGetReport() {
-        String responseMsg = target.path("reports/test").request().get(String.class);
-        assertEquals("Report details: test", responseMsg);
+        List<Event> responseMsg = target.path("report/allEvents").request().get(List.class);
+        //assertEquals(null, responseMsg);
     }
 }
