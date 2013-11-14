@@ -2,31 +2,41 @@ package net.nuevegen.dashboard.reports.model;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.NamedQuery;
+import javax.ws.rs.FormParam;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
-@Entity
+//@Entity
 @XmlRootElement
-@NamedQuery(name="allEvents",
-			query="SELECT * "
-				+ "FROM ukint_project_delay_reports")
+//@NamedQuery(name="events",
+//			query="SELECT * "
+//				+ "FROM ukint_project_delay_reports")
 public class Event implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
+	@FormParam("country")
 	private String country;
+	@FormParam("project_type")
 	private String project_type;
-	private Integer project_id;
+	@FormParam("project_id")
+	private String project_id;
+	@FormParam("date")
 	private Date date;
+	@FormParam("type")
 	private String type;
+	@FormParam("event")
 	private String event;
+	@FormParam("impact")
 	private Integer impact;
+	@FormParam("reason")
 	private String reason;
+	@FormParam("timelines")
 	private String timelines;
-	private Date autotimestamp;
+	private Timestamp autotimestamp;
+	@FormParam("event_id")
 	private Integer event_id;
 	
 	public String getCountry() {
@@ -41,10 +51,10 @@ public class Event implements Serializable {
 	public void setProject_type(String project_type) {
 		this.project_type = project_type;
 	}
-	public Integer getProject_id() {
+	public String getProject_id() {
 		return project_id;
 	}
-	public void setProject_id(Integer project_id) {
+	public void setProject_id(String project_id) {
 		this.project_id = project_id;
 	}
 	public Date getDate() {
@@ -83,10 +93,10 @@ public class Event implements Serializable {
 	public void setTimelines(String timelines) {
 		this.timelines = timelines;
 	}
-	public Date getAutotimestamp() {
+	public Timestamp getAutotimestamp() {
 		return autotimestamp;
 	}
-	public void setAutotimestamp(Date autotimestamp) {
+	public void setAutotimestamp(Timestamp autotimestamp) {
 		this.autotimestamp = autotimestamp;
 	}
 	public Integer getEvent_id() {
