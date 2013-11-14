@@ -2,14 +2,14 @@ package net.nuevegen.dashboard;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 
-import net.nuevegen.dashboard.reports.model.Event;
-
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.junit.After;
 import org.junit.Before;
@@ -43,10 +43,21 @@ public class ReportsTest {
 
     /**
      * Test to see if resource is responding dynamically
+     * @throws JSONException 
      */
     @Test
-    public void testGetReport() {
-        List<Event> responseMsg = target.path("report/allEvents").request().get(List.class);
-        //assertEquals(null, responseMsg);
+    public void testGetEvents() throws JSONException {
+       JSONArray responseMsg = target.path("report/events").request(MediaType.APPLICATION_JSON).get(JSONArray.class);
+       assertEquals("ru", ((JSONObject)responseMsg.get(0)).get("country"));
+    }
+    
+    /**
+     * Test to see if resource is responding dynamically
+     * @throws JSONException 
+     */
+    @Test
+    public void testGetEventsByProject() throws JSONException {
+       JSONArray responseMsg = target.path("report/events/517474").request(MediaType.APPLICATION_JSON).get(JSONArray.class);
+       assertEquals("ru", ((JSONObject)responseMsg.get(0)).get("country"));
     }
 }
