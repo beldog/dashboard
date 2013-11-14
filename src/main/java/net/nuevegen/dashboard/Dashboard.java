@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
@@ -94,9 +95,13 @@ public class Dashboard {
      * @throws Exception 
      */
     public static void main(String[] args) throws Exception {
-    	final HttpServer server = startServer();
-
+    	
     	try{
+    		final HttpServer server = startServer();
+    		
+    		//Adding static resources like JS and HTML
+    		server.getServerConfiguration().addHttpHandler(new StaticHttpHandler("./ui"),"/ui");          
+            
 	    	System.out.println(String.format(Messages.getString("server.welcome") //$NON-NLS-1$
 	                + "%sapplication.wadl", properties.getProperty(BASE_URI))); //$NON-NLS-1$
 	 
