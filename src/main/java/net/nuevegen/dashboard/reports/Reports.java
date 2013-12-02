@@ -6,11 +6,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -40,7 +44,8 @@ public class Reports {
     	List<Event> events = new LinkedList<Event>(); 
     	try 
     	{
-    		String query = "SELECT * FROM pm_project_event";
+    		Logger.getGlobal().log(Level.FINE, "Requesting all Events.");
+    		String query = "SELECT * FROM pm_project_event ORDER BY date DESC";
 
     		st = Dashboard.cn_readHeavyLoad.prepareStatement(query);
     		rs = st.executeQuery();
@@ -92,7 +97,7 @@ public class Reports {
     	List<Event> events = new LinkedList<Event>(); 
     	try 
     	{
-    		String query = "SELECT * FROM pm_project_event WHERE project_id = ?";
+    		String query = "SELECT * FROM pm_project_event WHERE project_id = ? ORDER BY date DESC";
 
     		st = Dashboard.cn_read.prepareStatement(query);
     		st.setString(1, id);
@@ -137,7 +142,7 @@ public class Reports {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("events")
+    @Path("events/{id}")
     public Response postEvent(@BeanParam Event event, @Context UriInfo ui) {
     	Response response = null;
     	
@@ -147,25 +152,128 @@ public class Reports {
     	{
     		String query = "INSERT INTO pm_project_event"
     				+ " (`country`,`project_type`,`project_id`,`date`,`type`,`event`,`impact`,`reason`,`timelines`)"
-    				+ " VALUES ("
-    				+ "'" + event.getCountry() +"',"
-    				+ "'" + event.getProject_type() +"',"
-    				+ "'" + event.getProject_id() +"',"
-    				+ "'" + event.getDate() +"',"
-    				+ "'" + event.getType() +"',"
-    				+ "'" + event.getEvent() +"',"
-    				+ event.getImpact() +","
-    				+ "'" + event.getReason() +"',"
-    				+ "'" + event.getTimelines() +"')";
+    				+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-//    		System.out.println(query);
-    		st = Dashboard.cn_read.prepareStatement(query);
-
+    		st = Dashboard.cn_write.prepareStatement(query);
+    		
+    		st.setString(1, event.getCountry());
+    		st.setString(2, event.getProject_type());
+    		st.setString(3, event.getProject_id());
+    		st.setDate(4, event.getDate());
+    		st.setString(5, event.getType());
+    		st.setString(6, event.getEvent());
+    		st.setInt(7, event.getImpact());
+    		st.setString(8, event.getReason());
+    		st.setString(9, event.getTimelines());
+    		
     		if (st.executeUpdate() == 0){
     			response = Response.noContent().build();
     		}
     		else{
     			response = Response.created(URI.create(ui.getRequestUri() +"/"+ event.getProject_id())).build();
+    		}
+    	} 
+    	catch (Exception e) 
+    	{
+    		response = Response.serverError().build();
+    		System.out.println("Error querying db: "+ e.getMessage());
+    		e.printStackTrace();
+    	}
+    	finally{
+    		try{
+    			if(rs != null && !rs.isClosed()) rs.close();
+    			if(st != null && !st.isClosed()) st.close();
+    		}
+    		catch(SQLException e){
+    			e.printStackTrace();
+    		}
+    	}
+    	
+    	return response;
+    }
+    
+    @PUT
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("events/{id}/{event_id}")
+    public Response putEvent(@PathParam("id") String id, @PathParam("event_id") Integer event_id, @BeanParam Event event, @Context UriInfo ui) {
+    	Response response = null;
+    	
+    	PreparedStatement st = null;
+    	ResultSet rs = null;
+    	try 
+    	{
+    		response = Response.notModified().build();
+    		
+    		String query = "UPDATE pm_project_event SET "
+    				+ " `country`=?,"
+    				+ " `project_type`=?,"
+    				+ " `project_id`=?,"
+    				+ " `date`=?,"
+    				+ " `type`=?,"
+    				+ " `event`=?,"
+    				+ " `impact`=?,"
+    				+ " `reason`=?,"
+    				+ " `timelines`=?"
+    				+ " WHERE event_id=?";
+
+    		st = Dashboard.cn_write.prepareStatement(query);
+    		
+    		st.setString(1, event.getCountry());
+    		st.setString(2, event.getProject_type());
+    		st.setString(3, event.getProject_id());
+    		st.setDate(4, event.getDate());
+    		st.setString(5, event.getType());
+    		st.setString(6, event.getEvent());
+    		st.setInt(7, event.getImpact());
+    		st.setString(8, event.getReason());
+    		st.setString(9, event.getTimelines());
+    		st.setInt(10, event_id);
+    		
+    		if (st.executeUpdate() != 0){
+    			response = Response.ok().build();
+    		}
+    	} 
+    	catch (Exception e) 
+    	{
+    		response = Response.serverError().build();
+    		System.out.println("Error querying db: "+ e.getMessage());
+    		e.printStackTrace();
+    	}
+    	finally{
+    		try{
+    			if(rs != null && !rs.isClosed()) rs.close();
+    			if(st != null && !st.isClosed()) st.close();
+    		}
+    		catch(SQLException e){
+    			e.printStackTrace();
+    		}
+    	}
+    	System.out.println("PUT call response: "+ response);
+    	return response;
+    }
+    
+    @DELETE
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("events/{id}/{event_id}")
+    public Response deleteEvent(@PathParam("id") String id, @PathParam("event_id") Integer event_id) {
+    	Response response = null;
+    	
+    	PreparedStatement st = null;
+    	ResultSet rs = null;
+    	try 
+    	{
+    		response = Response.notModified().build();
+    		
+    		String query = "DELETE FROM pm_project_event WHERE event_id=?";
+
+    		st = Dashboard.cn_write.prepareStatement(query);
+    		
+    		st.setInt(1, event_id);
+    		
+    		if (st.executeUpdate() != 0){
+    			response = Response.ok().build();
     		}
     	} 
     	catch (Exception e) 
