@@ -1,18 +1,22 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-	<head>
-		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		<link rel="shortcut icon" type="image/ico" href="" />
-		
-		<title>UK&Int Dashboard</title>
-		<style type="text/css" title="currentStyle">
-			//@import "base.css";
-		</style>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="shortcut icon" type="image/ico" href="" />
 
-		<script type="text/javascript" src="lib/jquery-1.10.2.min.js"></script>
+<title>UK&Int Dashboard</title>
+<style type="text/css" title="currentStyle">
+//
+@import "base.css";
+</style>
 
-		<script type="text/javascript">
+<script type="text/javascript" src="lib/jquery-1.10.2.min.js"></script>
 
+<script type="text/javascript">
+
+			var FORM_ELEMENTS = {'project_id': '4', 'country': '4', 'project_type':'20', 'date':'10', 
+						'type':'30', 'event':'30', 'impact':'4', 'reason':'30', 'timelines':'50'};
+			
 	        function getEvents(){
 
 	        	var filter = $("#filterProjectId").val();
@@ -20,18 +24,18 @@
 	        	if (filter.length >0) filter = "/"+ filter;
 
 				$.ajax({
-				           type: 'GET',
-				           url: "/rest/report/events"+ filter,
-				           processData: true,
-				           data: {},
-				           dataType: "json",
-				           success: function (data) {
-				               buildTable(data);
-				           }
+		           type: 'GET',
+		           url: "/rest/report/events"+ filter,
+		           processData: true,
+		           data: {},
+		           dataType: "json",
+		           success: function (data) {
+		               buildTable(data);
+		           }
 				});
 
 	        }
-
+	        
 	        function getLastEvent(){
 
 	        	var filter = $("#project_id").val();
@@ -39,40 +43,49 @@
 	        	if (filter.length >0) filter = "/"+ filter;
 
 				$.ajax({
-				           type: 'GET',
-				           url: "/rest/report/events"+ filter,
-				           processData: true,
-				           data: {},
-				           dataType: "json",
-				           success: function (data) {
-				           	$.each(data, function(index, element) {
-					            populate($("#eventForm"), element);
-					        });
-			               
-				           }
+		           type: 'GET',
+		           url: "/rest/report/events"+ filter,
+		           processData: true,
+		           data: {},
+		           dataType: "json",
+		           success: function (data) {
+			           	//$.each(data, function(index, element) {
+				        //    populate($("#eventForm"), element);
+				        //});
+						populate($("#eventForm"), data[0]);			               
+		           }
+				});
+
+	        }
+	        
+	        function deleteEvent(project_id, event_id){
+
+				$.ajax({
+		           type: 'DELETE',
+		           url: "/rest/report/events/"+ project_id +"/"+ event_id,
+		           success: function (data) {
+		        	   getEvents();
+		           }
 				});
 
 	        }
 
+			/*** Toolkit ***/
 	        function populate(frm, data) {   
-			    /*$.each(data, function(key, value){
-				    $('[name='+key+']', frm).val(value);
-				  });*/
-
 			    $.each(data, function(key, value){  
-			    var $ctrl = $('[name='+key+']', frm);  
-			    switch($ctrl.attr("type"))  
-			    {  
-			        case "text" :   
-			        case "hidden":  
-			        case "textarea":  
-			        $ctrl.val(value);   
-			        break;   
-			        case "radio" : case "checkbox":   
-			        $ctrl.each(function(){
-			           if($(this).attr('value') == value) {  $(this).attr("checked",value); } });   
-			        break;  
-			    }  
+				    var $ctrl = $('[name='+key+']', frm);  
+				    switch($ctrl.attr("type"))  
+				    {  
+				        case "text" :   
+				        case "hidden":  
+				        case "textarea":  
+				        $ctrl.val(value);   
+				        break;   
+				        case "radio" : case "checkbox":   
+				        $ctrl.each(function(){
+				           if($(this).attr('value') == value) {  $(this).attr("checked",value); } });   
+				        break;  
+				    }  
 			    });  
 
 			}
@@ -80,19 +93,45 @@
 			// Builds the HTML Table out of myList.
 			function buildTable(myList) {
 
-
 			    var columns = addAllColumnHeaders(myList);
 
 			    for (var i = 0 ; i < myList.length ; i++) {
-			        var row$ = $('<tr/>');
+			        var event_id = null;
+			    	var row$ = $('<tr/>');
 			        for (var colIndex = 0 ; colIndex < columns.length ; colIndex++) {
 			            var cellValue = myList[i][columns[colIndex]];
 
+			            if (columns[colIndex] == "event_id") { event_id = cellValue; }
 			            if (cellValue == null) { cellValue = ""; }
 
-			            row$.append($('<td/>').html(cellValue));
+			            row$.append($('<td/>').html(cellValue).attr('id', columns[colIndex]));
 			        }
-			        $("#excelDataTable").append(row$);
+			        
+			        /* Actions set */
+			        //update
+			        row$.append($('<td/>').html($('<button/>',{
+			        	text: 'update',
+			        	click: function(){
+			        		$(this).closest('tr').find('td').each(function () {
+			        			var id = $(this).attr('id');
+			        			var html = $(this).html();
+					            
+					            if(FORM_ELEMENTS[id] != null){
+						            var input = $('<input type="text" />').attr('size', FORM_ELEMENTS[id]);
+						            
+						            
+						            input.val(html);
+						            $(this).html(input);
+					            }
+					        });}
+			        })));
+			        
+			        //delete
+			        row$.append($('<td/>').html($('<button/>',{
+			        	text: 'delete',
+			        	click: function(){ deleteEvent($(this).closest('tr').find('#project_id').text(), $(this).closest('tr').attr('event_id'))}
+			        })));
+			        $("#excelDataTable").append(row$.attr('event_id', event_id).attr('id', 'e'+ event_id));
 			    }
 			}
 
@@ -118,30 +157,32 @@
 
 	 </script>
 
-	</head>
-	<body onLoad="getEvents();">
-			<h1>
-				UK&Int Dashboard
-			</h1>
-			
-			<h2>Add new Event</h2>
+</head>
+<body onLoad="getEvents();">
+	<h1>UK&Int Dashboard</h1>
 
-			<form id="eventForm">
-				<label for="project_id">Project Id</label><input type="text" name="project_id" id="project_id" size="4" onChange="getLastEvent();" />
-				<label for="country">Country</label><input type="text" name="country" id="country" size="4"/>
-				<label for="project_type">Project Type</label><input type="text" name="project_type" id="project_type" size="20"/>
-				<label for="date">Date</label><input type="text" name="date" id="date" size="10"/>
-				<label for="type">Type</label><input type="text" name="type" id="type" size="30"/>
-				<label for="event">Event</label><input type="text" name="event" id="event" size="30"/>
-				<label for="impact">Impact</label><input type="text" name="impact" id="impact" size="4"/>
-				<label for="reason">Reason</label><input type="text" name="reason" id="reason" size="30"/>
-				<label for="timelines">Timelines</label><input type="text" name="timelines" id="timelines" size="50"/>
-				<input type="submit" name="submit" id="createEvent" value="add"/>
-			</form>
-			<script type="text/javascript">
-			$("#eventForm").submit(function() {
+	<h2>Add new Event</h2>
 
-				    var url = "/rest/report/events";
+	<form id="eventForm">
+		<label for="project_id">Project Id</label><input type="text"
+			name="project_id" id="project_id" size="4" onChange="getLastEvent();" />
+		<label for="country">Country</label><input type="text" name="country"
+			id="country" size="4" /> <label for="project_type">Project
+			Type</label><input type="text" name="project_type" id="project_type"
+			size="20" /> <label for="date">Date</label><input type="text"
+			name="date" id="date" size="10" /> <label for="type">Type</label><input
+			type="text" name="type" id="type" size="30" /> <label for="event">Event</label><input
+			type="text" name="event" id="event" size="30" /> <label for="impact">Impact</label><input
+			type="text" name="impact" id="impact" size="4" /> <label for="reason">Reason</label><input
+			type="text" name="reason" id="reason" size="30" /> <label
+			for="timelines">Timelines</label><input type="text" name="timelines"
+			id="timelines" size="50" /> <input type="submit" name="submit"
+			id="createEvent" value="add" />
+	</form>
+	<script type="text/javascript">
+				$("#eventForm").submit(function() {
+
+				    var url = "/rest/report/events/"+ $("#eventForm").find('#project_id').val();
 
 				    $.ajax({
 				           type: "POST",
@@ -159,8 +200,12 @@
 			</script>
 
 
-			<h2>List of Events</h2>
-			<label for="filterProjectId">Filter by Project Id: </label><input type="text" name="filterProjectId"  value="empty" id="filterProjectId" size="4" onChange="getEvents();"/><br />
-			<table id="excelDataTable" border="1"></table>
-	</body>​
+	<h2>List of Events</h2>
+	<label for="filterProjectId">Filter by Project Id: </label>
+	<input type="text" name="filterProjectId" value="empty"
+		id="filterProjectId" size="4" onChange="getEvents();" />
+	<br />
+	<table id="excelDataTable" border="1"></table>
+</body>
+​
 </html>
