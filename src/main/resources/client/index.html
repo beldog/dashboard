@@ -6,163 +6,32 @@
 
 <title>UK&Int Dashboard</title>
 <style type="text/css" title="currentStyle">
-//
-@import "base.css";
+//@import "base.css";
 </style>
-
-<script type="text/javascript" src="lib/jquery-1.10.2.min.js"></script>
-
-<script type="text/javascript">
-
-			var FORM_ELEMENTS = {'project_id': '4', 'country': '4', 'project_type':'20', 'date':'10', 
-						'type':'30', 'event':'30', 'impact':'4', 'reason':'30', 'timelines':'50'};
-			
-	        function getEvents(){
-
-	        	var filter = $("#filterProjectId").val();
-	        	
-	        	if (filter.length >0) filter = "/"+ filter;
-
-				$.ajax({
-		           type: 'GET',
-		           url: "/rest/report/events"+ filter,
-		           processData: true,
-		           data: {},
-		           dataType: "json",
-		           success: function (data) {
-		               buildTable(data);
-		           }
-				});
-
-	        }
-	        
-	        function getLastEvent(){
-
-	        	var filter = $("#project_id").val();
-	        	
-	        	if (filter.length >0) filter = "/"+ filter;
-
-				$.ajax({
-		           type: 'GET',
-		           url: "/rest/report/events"+ filter,
-		           processData: true,
-		           data: {},
-		           dataType: "json",
-		           success: function (data) {
-			           	//$.each(data, function(index, element) {
-				        //    populate($("#eventForm"), element);
-				        //});
-						populate($("#eventForm"), data[0]);			               
-		           }
-				});
-
-	        }
-	        
-	        function deleteEvent(project_id, event_id){
-
-				$.ajax({
-		           type: 'DELETE',
-		           url: "/rest/report/events/"+ project_id +"/"+ event_id,
-		           success: function (data) {
-		        	   getEvents();
-		           }
-				});
-
-	        }
-
-			/*** Toolkit ***/
-	        function populate(frm, data) {   
-			    $.each(data, function(key, value){  
-				    var $ctrl = $('[name='+key+']', frm);  
-				    switch($ctrl.attr("type"))  
-				    {  
-				        case "text" :   
-				        case "hidden":  
-				        case "textarea":  
-				        $ctrl.val(value);   
-				        break;   
-				        case "radio" : case "checkbox":   
-				        $ctrl.each(function(){
-				           if($(this).attr('value') == value) {  $(this).attr("checked",value); } });   
-				        break;  
-				    }  
-			    });  
-
-			}
-
-			// Builds the HTML Table out of myList.
-			function buildTable(myList) {
-
-			    var columns = addAllColumnHeaders(myList);
-
-			    for (var i = 0 ; i < myList.length ; i++) {
-			        var event_id = null;
-			    	var row$ = $('<tr/>');
-			        for (var colIndex = 0 ; colIndex < columns.length ; colIndex++) {
-			            var cellValue = myList[i][columns[colIndex]];
-
-			            if (columns[colIndex] == "event_id") { event_id = cellValue; }
-			            if (cellValue == null) { cellValue = ""; }
-
-			            row$.append($('<td/>').html(cellValue).attr('id', columns[colIndex]));
-			        }
-			        
-			        /* Actions set */
-			        //update
-			        row$.append($('<td/>').html($('<button/>',{
-			        	text: 'update',
-			        	click: function(){
-			        		$(this).closest('tr').find('td').each(function () {
-			        			var id = $(this).attr('id');
-			        			var html = $(this).html();
-					            
-					            if(FORM_ELEMENTS[id] != null){
-						            var input = $('<input type="text" />').attr('size', FORM_ELEMENTS[id]);
-						            
-						            
-						            input.val(html);
-						            $(this).html(input);
-					            }
-					        });}
-			        })));
-			        
-			        //delete
-			        row$.append($('<td/>').html($('<button/>',{
-			        	text: 'delete',
-			        	click: function(){ deleteEvent($(this).closest('tr').find('#project_id').text(), $(this).closest('tr').attr('event_id'))}
-			        })));
-			        $("#excelDataTable").append(row$.attr('event_id', event_id).attr('id', 'e'+ event_id));
-			    }
-			}
-
-			// Adds a header row to the table and returns the set of columns.
-			// Need to do union of keys from all records as some records may not contain
-			// all records
-			function addAllColumnHeaders(myList){
-			    var columnSet = [];
-			    var headerTr$ = $('<tr/>');
-
-			    for (var i = 0 ; i < myList.length ; i++) {
-			        var rowHash = myList[i];
-			        for (var key in rowHash) {
-			            if ($.inArray(key, columnSet) == -1){
-			                columnSet.push(key);
-			                headerTr$.append($('<th/>').html(key));
-			            }
-			        }
-			    }
-			    $("#excelDataTable").html(headerTr$);
-			    return columnSet;
-			}
-
-	 </script>
-
+<script type="text/javascript" src="lib/jquery-1.10.2.min.js" /></script>
+<script type="text/javascript" src="lib/toolkit.js"></script>
 </head>
-<body onLoad="getEvents();">
+<body onLoad="">
 	<h1>UK&Int Dashboard</h1>
 
 	<h2>Add new Event</h2>
 
+<div id="content">
+        <table id="assets">
+            <tr>
+                <td class="asset_name"><span>Name</span></td>
+                <td class="asset_value"><span>ast1</span></td>
+                <td class="asset_name"><span>Location</span></td>
+                <td class="asset_value"><span>Loc-1</span></td>
+            </tr>
+            <tr>
+                <td class="asset_name"><span>Name</span></td>
+                <td class="asset_value"><span>ast2</span></td>
+                <td class="asset_name"><span>Location</span></td>
+                <td class="asset_value"><span>Loc-2</span></td>
+            </tr>
+        </table>​
+    </div>
 	<form id="eventForm">
 		<label for="project_id">Project Id</label><input type="text"
 			name="project_id" id="project_id" size="4" onChange="getLastEvent();" />
@@ -179,31 +48,11 @@
 			id="timelines" size="50" /> <input type="submit" name="submit"
 			id="createEvent" value="add" />
 	</form>
-	<script type="text/javascript">
-				$("#eventForm").submit(function() {
-
-				    var url = "/rest/report/events/"+ $("#eventForm").find('#project_id').val();
-
-				    $.ajax({
-				           type: "POST",
-				           url: url,
-				           data: $("#eventForm").serialize(), // serializes the form's elements.
-				           success: function(data)
-				           {
-				               getEvents();
-				           }
-				         });
-
-				    //ev.preventDefault(); // avoid to execute the actual submit of the form.
-				    return false;
-				});
-			</script>
-
 
 	<h2>List of Events</h2>
 	<label for="filterProjectId">Filter by Project Id: </label>
-	<input type="text" name="filterProjectId" value="empty"
-		id="filterProjectId" size="4" onChange="getEvents();" />
+	<input type="text" name="filterProjectId" value="517474"
+		id="filterProjectId" size="4" />
 	<br />
 	<table id="excelDataTable" border="1"></table>
 </body>
