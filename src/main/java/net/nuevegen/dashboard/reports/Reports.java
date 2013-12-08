@@ -1,6 +1,7 @@
 package net.nuevegen.dashboard.reports;
 
 import java.net.URI;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -165,7 +166,7 @@ public class Reports {
     			Launch launch = new Launch();
     			launch.setCountry(rs.getString("country"));
     			launch.setProject_type(rs.getString("project type"));
-    			launch.setDate(rs.getDate("year"));
+    			launch.setDate(Date.valueOf(rs.getString("year") +"-1-1"));
     			launch.setTotal(rs.getInt("total launched"));
     			
     			launches.add(launch);
@@ -193,8 +194,8 @@ public class Reports {
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("launches{month : (/[0-9]+)?}")
-    public List<Launch> getLaunchesByMonth(@PathParam("month") Integer month) {
+    @Path("launches{month : (/[0-9-]+)?}")
+    public List<Launch> getLaunchesByMonth(@PathParam("month") String month) {
     	
     	PreparedStatement st = null;
     	ResultSet rs = null;
@@ -205,7 +206,7 @@ public class Reports {
     		String query = "SELECT * FROM ukint_project_amount_launches_by_month WHERE 1 ";
 
     		if (month != null){
-    			query += "AND ="+ month;
+    			query += "AND month like '"+ month.replace("/", "") +"%'";
     		}
     		
     		st = Dashboard.cn_readHeavyLoad.prepareStatement(query);
@@ -215,7 +216,7 @@ public class Reports {
     			Launch launch = new Launch();
     			launch.setCountry(rs.getString("country"));
     			launch.setProject_type(rs.getString("project type"));
-    			launch.setDate(rs.getDate("year"));
+    			launch.setDate(Date.valueOf(rs.getString("month") +"-1"));
     			launch.setTotal(rs.getInt("total launched"));
     			
     			launches.add(launch);
