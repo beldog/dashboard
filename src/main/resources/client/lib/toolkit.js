@@ -10,20 +10,20 @@ var FORM_ELEMENTS = {'project_id': '4', 'country': '4', 'project_type':'20', 'da
 /** REST API **/
 
 /* Events */
-function getEvents(){
+function getData(report, data, table){
 
-	var filter = $("#filterProjectId").val();
+	var filter = $(data).val();
 
 	if (filter.length >0) filter = "/"+ filter;
 
 	$.ajax({
 		type: 'GET',
-		url: "/rest/report/events"+ filter,
+		url: "/rest/report/"+ report + filter,
 		processData: true,
 		data: {},
 		dataType: "json",
 		success: function (data) {
-			buildTable("#excelEventsTable", data, true);
+			buildTable(table, data, true);
 		}
 	});
 
@@ -46,26 +46,6 @@ function getLastEvent(){
 			//    populate($("#eventForm"), element);
 			//});
 			populate($("#eventForm"), data[0]);			               
-		}
-	});
-
-}
-
-/* Launches*/
-function getLaunches(){
-
-	var filter = $("#filterCountry").val();
-
-	if (filter.length >0) filter = "/"+ filter;
-
-	$.ajax({
-		type: 'GET',
-		url: "/rest/report/launches"+ filter,
-		processData: true,
-		data: {},
-		dataType: "json",
-		success: function (data) {
-			buildTable("#excelLaunchesTable", data, false);
 		}
 	});
 
@@ -235,11 +215,12 @@ function enrichRow() {
 //Listeners
 $(document).ready(function() {
 	loadListeners();
-	getEvents();
-	getLaunches();
+	getData("events", "#filterProjectId", "#excelEventsTable");
+	getData("launches", "#filterCountry", "#excelLaunchesTable");
 	
 	$("#eventForm #project_id").on("change", getLastEvent);
 	
-	$("#filterProjectId").on('change', getEvents);
-	$("#filterCountry").on('change', getLaunches);
+	$("#filterProjectId").on('change', function(event){getData("events", "#filterProjectId", "#excelEventsTable");});
+	$("#filterCountry").on('change', function(event){getData("launches", "#filterCountry", "#excelLaunchesTable");});
+	$("#filterMonth").on('change', function(event){getData("launches", "#filterMonth", "#excelLaunchesTable");});
 });
