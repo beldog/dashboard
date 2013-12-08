@@ -6,18 +6,67 @@
 
 <title>UK&Int Dashboard</title>
 <style type="text/css" title="currentStyle">
-//@import "base.css";
+/*@import "base.css";*/
+
+body{ margin: 0px; padding: 0px;}
+
+#reports{
+	height: 25px;
+	text-align: center;
+	margin: 0px;
+	padding: 0px;
+	margin-bottom: 5px;
+	border: 1px solid #ffffff;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	background-color: #ffffff;
+
+	-webkit-border-bottom-right-radius: 10px;
+	-webkit-border-bottom-left-radius: 10px;
+	-moz-border-radius-bottomright: 10px;
+	-moz-border-radius-bottomleft: 10px;
+	border-bottom-right-radius: 10px;
+	border-bottom-left-radius: 10px;	
+    
+    -moz-box-shadow: 0 0 10px #bdbdbd;
+    -webkit-box-shadow: 0 0 10px #bdbdbd;
+    box-shadow: 0 0 10px #bdbdbd;
+}
+
+.report{
+	width: 16%;
+	float: left;
+	text-align: center;
+	border: 0px solid;
+}
+
+h2 {
+	padding-top: 20px;
+}
+
+hr {
+	border: 1px dotted #dddddd;
+}
 </style>
 <script type="text/javascript" src="lib/jquery-1.10.2.min.js" /></script>
 <script type="text/javascript" src="lib/toolkit.js"></script>
 </head>
 <body onLoad="">
-	<h1>UK&Int Dashboard</h1>
-
-	<h2>Add new Event</h2>
+	<div id="reports">
+		<div class="report"><a href="#events">Events</a></div>
+		<div class="report"><a href="#launches">Projects Launched</a></div>
+		<div class="report"><a href="#delays">Projects Delayed</a></div>
+		<div class="report"><a href="#delays_detailed">Projects detailed delayed</a></div>
+		<div class="report"><a href="#gannt">Gannt</a></div>
+		<div class="report"><a href="#timelines">Timelines</a></div>
+	</div>
+	<a class="section" name="top"/><h1>UK&Int Dashboard</h1>
+	<a class="section" name="events" /><h2>Add new Event</h2>
 	<form id="eventForm">
 		<label for="project_id">Project Id</label><input type="text"
-			name="project_id" id="project_id" size="4" onChange="getLastEvent();" />
+			name="project_id" id="project_id" size="4" />
 		<label for="country">Country</label><input type="text" name="country"
 			id="country" size="4" /> <label for="project_type">Project
 			Type</label><input type="text" name="project_type" id="project_type"
@@ -37,7 +86,37 @@
 	<input type="text" name="filterProjectId" value="517474"
 		id="filterProjectId" size="4" />
 	<br />
-	<table id="excelDataTable" border="1"></table>
+	<table id="excelEventsTable" border="1"></table>
+	<a href="#top">top</a>
+	<hr />
+	
+	<a class="section" name="launches" /><h2>Amount of Launches</h2>
+	<label for="filterCountry">Filter by Country: </label>
+	<input type="text" name="filterCountry" value="ru"
+		id="filterCountry" size="4" />
+	<br />
+	<table id="excelLaunchesTable" border="1"></table>
+	<a href="#top">top</a>
+	<hr />
+	
+	<a class="section" name="delays" /><h2>Projects Delayed</h2>
+	<label for="filterMonth">Filter by Country: </label>
+	<input type="text" name="filterMonth" value="5"
+		id="filterMonth" size="4" />
+	<br />
+	<table id="excelDelayedTable" border="1"></table>
+	<a href="#top">top</a>
+	<hr />
+	
+	<a class="section" name="delays_detailed" /><h2>Projects Delayed - detailed</h2>
+	<a href="#top">top</a>
+	<hr />
+	
+	<a class="section" name="gannt" /><h2>Gannt</h2>
+	<a href="#top">top</a>
+	<hr />
+	
+	<a class="section" name="timelines" /><h2>Timelines</h2>
+	<a href="#top">top</a>
 </body>
-​
 </html>
