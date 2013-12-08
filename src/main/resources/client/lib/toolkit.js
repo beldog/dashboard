@@ -8,6 +8,8 @@ var FORM_ELEMENTS = {'project_id': '4', 'country': '4', 'project_type':'20', 'da
 
 
 /** REST API **/
+
+/* Events */
 function getEvents(){
 
 	var filter = $("#filterProjectId").val();
@@ -21,7 +23,7 @@ function getEvents(){
 		data: {},
 		dataType: "json",
 		success: function (data) {
-			buildTable(data);
+			buildTable("#excelEventsTable", data, true);
 		}
 	});
 
@@ -49,6 +51,27 @@ function getLastEvent(){
 
 }
 
+/* Launches*/
+function getLaunches(){
+
+	var filter = $("#filterCountry").val();
+
+	if (filter.length >0) filter = "/"+ filter;
+
+	$.ajax({
+		type: 'GET',
+		url: "/rest/report/launches"+ filter,
+		processData: true,
+		data: {},
+		dataType: "json",
+		success: function (data) {
+			buildTable("#excelLaunchesTable", data, false);
+		}
+	});
+
+}
+
+/* Event CRUD */
 function deleteEvent(project_id, event_id){
 
 	$.ajax({
@@ -91,9 +114,9 @@ function loadListeners(){
 			}
 		});
 	
-		ev.stopPropagation();
+		//ev.stopPropagation();
 		//ev.preventDefault(); // avoid to execute the actual submit of the form.
-		//return false;
+		return false;
 	});
 }
 
@@ -118,9 +141,9 @@ function populate(frm, data) {
 }
 
 // Builds the HTML Table out of myList.
-function buildTable(myList) {
+function buildTable(table, myList, actions) {
 
-	var columns = addAllColumnHeaders(myList);
+	var columns = addAllColumnHeaders(table, myList);
 
 	for (var i = 0 ; i < myList.length ; i++) {
 		var event_id = null;
@@ -135,21 +158,26 @@ function buildTable(myList) {
 		}
 
 		/* Actions set */
+		if(actions){
+			//delete
+			row$.append($('<td/>').html($('<button/>',{
+				text: 'delete',
+				click: function(){ deleteEvent($(this).closest('tr').find('#project_id').text(), $(this).closest('tr').attr('event_id'))}
+			})));
+		}
+
+		$(table).append(row$.attr('event_id', event_id).attr('id', 'event'));
 		
-		//delete
-		row$.append($('<td/>').html($('<button/>',{
-			text: 'delete',
-			click: function(){ deleteEvent($(this).closest('tr').find('#project_id').text(), $(this).closest('tr').attr('event_id'))}
-		})));
-		$("#excelDataTable").append(row$.attr('event_id', event_id).attr('id', 'event'));
-		enrichRow();
+		if(actions){
+			enrichRow();
+		}
 	}
 }
 
 // Adds a header row to the table and returns the set of columns.
 // Need to do union of keys from all records as some records may not contain
 // all records
-function addAllColumnHeaders(myList){
+function addAllColumnHeaders(table, myList){
 	var columnSet = [];
 	var headerTr$ = $('<tr/>');
 
@@ -162,13 +190,13 @@ function addAllColumnHeaders(myList){
 			}
 		}
 	}
-	$("#excelDataTable").html(headerTr$);
+	$(table).html(headerTr$);
 	return columnSet;
 }
 
 function enrichRow() {
 	console.debug("Enriching content...");
-	$('#excelDataTable').on('dblclick', 'span', function() {
+	$('#excelEventsTable').on('dblclick', 'span', function() {
 		var $parent = $(this).parent();
 		var id = $(this).attr('id');
 		
@@ -205,10 +233,13 @@ function enrichRow() {
 }
 
 //Listeners
-
-//window.addEventListener('load', loadListeners, getEvents);
 $(document).ready(function() {
 	loadListeners();
 	getEvents();
+	getLaunches();
+	
+	$("#eventForm #project_id").on("change", getLastEvent);
+	
 	$("#filterProjectId").on('change', getEvents);
+	$("#filterCountry").on('change', getLaunches);
 });

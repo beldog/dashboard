@@ -25,6 +25,7 @@ import javax.ws.rs.core.UriInfo;
 
 import net.nuevegen.dashboard.Dashboard;
 import net.nuevegen.dashboard.reports.model.Event;
+import net.nuevegen.dashboard.reports.model.Launch;
 
 /**
  * Root resource (exposed at "report/{reportId}" path)
@@ -138,6 +139,109 @@ public class Reports {
     	
     	return events;
     }
+    
+    @GET
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("launches{country : (/[a-zA-Z]+)?}")
+    public List<Launch> getLaunches(@PathParam("country") String country) {
+    	
+    	PreparedStatement st = null;
+    	ResultSet rs = null;
+    	List<Launch> launches = new LinkedList<Launch>(); 
+    	try 
+    	{
+    		Logger.getGlobal().log(Level.INFO, "Quering amount of projects launched filter by country: "+ country);
+    		String query = "SELECT * FROM ukint_project_amount_launches WHERE 1 ";
+
+    		if (country != null && country.trim().length()>0){
+    			query += "AND country='"+ country.replace("/", "") +"'";
+    		}
+    		
+    		st = Dashboard.cn_readHeavyLoad.prepareStatement(query);
+    		rs = st.executeQuery();
+    		
+    		while (rs.next()){
+    			Launch launch = new Launch();
+    			launch.setCountry(rs.getString("country"));
+    			launch.setProject_type(rs.getString("project type"));
+    			launch.setDate(rs.getDate("year"));
+    			launch.setTotal(rs.getInt("total launched"));
+    			
+    			launches.add(launch);
+    		}
+    		
+    	} 
+    	catch (Exception e) 
+    	{
+    		System.out.println("Error querying db: "+ e.getMessage());
+    		e.printStackTrace();
+    	}
+    	finally{
+    		try{
+    			if(rs != null && !rs.isClosed()) rs.close();
+    			if(st != null && !st.isClosed()) st.close();
+    		}
+    		catch(SQLException e){
+    			e.printStackTrace();
+    		}
+    	}
+    	
+    	return launches;
+    }
+    
+    @GET
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("launches{month : (/[0-9]+)?}")
+    public List<Launch> getLaunchesByMonth(@PathParam("month") Integer month) {
+    	
+    	PreparedStatement st = null;
+    	ResultSet rs = null;
+    	List<Launch> launches = new LinkedList<Launch>(); 
+    	try 
+    	{
+    		Logger.getGlobal().log(Level.INFO, "Quering amount of projects launched filter by month: "+ month);
+    		String query = "SELECT * FROM ukint_project_amount_launches_by_month WHERE 1 ";
+
+    		if (month != null){
+    			query += "AND ="+ month;
+    		}
+    		
+    		st = Dashboard.cn_readHeavyLoad.prepareStatement(query);
+    		rs = st.executeQuery();
+    		
+    		while (rs.next()){
+    			Launch launch = new Launch();
+    			launch.setCountry(rs.getString("country"));
+    			launch.setProject_type(rs.getString("project type"));
+    			launch.setDate(rs.getDate("year"));
+    			launch.setTotal(rs.getInt("total launched"));
+    			
+    			launches.add(launch);
+    		}
+    		
+    	} 
+    	catch (Exception e) 
+    	{
+    		System.out.println("Error querying db: "+ e.getMessage());
+    		e.printStackTrace();
+    	}
+    	finally{
+    		try{
+    			if(rs != null && !rs.isClosed()) rs.close();
+    			if(st != null && !st.isClosed()) st.close();
+    		}
+    		catch(SQLException e){
+    			e.printStackTrace();
+    		}
+    	}
+    	
+    	return launches;
+    }
+
+    
+    /* Ecent CRUD methods */
     
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
