@@ -42,12 +42,27 @@ body{ margin: 0px; padding: 0px;}
 	border: 0px solid;
 }
 
+div.section {
+	padding-top: 30px;
+	margin: 0px;
+}
+
+h1 {
+	margin: 0px;
+	padding-top: 30px;
+}
+
 h2 {
-	padding-top: 20px;
+	margin: 0px;
 }
 
 hr {
 	border: 1px dotted #dddddd;
+}
+
+div.top{
+ text-align: center;
+
 }
 </style>
 <script type="text/javascript" src="lib/jquery-1.10.2.min.js" /></script>
@@ -62,8 +77,9 @@ hr {
 		<div class="report"><a href="#gannt">Gannt</a></div>
 		<div class="report"><a href="#timelines">Timelines</a></div>
 	</div>
-	<a class="section" name="top"/><h1>UK&Int Dashboard</h1>
-	<a class="section" name="events" /><h2>Add new Event</h2>
+	<div id="top"/><h1>UK&Int Dashboard</h1></div>
+	<div class="section" id="events"><h2>Events</h2>
+	<h3>Add new Event</h3>
 	<form id="eventForm">
 		<label for="project_id">Project Id</label><input type="text"
 			name="project_id" id="project_id" size="4" />
@@ -81,45 +97,45 @@ hr {
 			id="createEvent" value="add" />
 	</form>
 
-	<h2>List of Events</h2>
+	<h3>List of Events</h3>
 	<label for="filterProjectId">Filter by Project Id: </label>
 	<input type="text" name="filterProjectId" value="517474"
 		id="filterProjectId" size="4" />
 	<br />
 	<table id="excelEventsTable" border="1"></table>
-	<a href="#top">top</a>
+	<div class="top"><a href="#top">top</a></div></div>
 	<hr />
 	
-	<a class="section" name="launches" /><h2>Amount of Launches</h2>
-	<label for="filterCountry">Filter by Country: </label>
-	<input type="text" name="filterCountry" value="ru"
+	<div class="section" id="launches" /><h2>Amount of Launches</h2>
+	<label for="filterCountry">Filter by Country (XX): </label>
+	<input type="text" name="filterCountry" value=""
 		id="filterCountry" size="4" />
 	<label for="filterMonth">Month (YYYY-MM): </label>
 	<input type="text" name="filterMonth" value=""
 		id="filterMonth" size="4" />
 	<br />
 	<table id="excelLaunchesTable" border="1"></table>
-	<a href="#top">top</a>
+	<div class="top"><a href="#top">top</a></div></div>
 	<hr />
 	
-	<a class="section" name="delays" /><h2>Projects Delayed</h2>
+	<div class="section" id="delays" /><h2>Projects Delayed</h2>
 	<label for="filterMonth">Filter by Country: </label>
-	<input type="text" name="filterMonth" value="5"
+	<input type="text" name="filterMonth" value=""
 		id="filterMonth" size="4" />
 	<br />
 	<table id="excelDelayedTable" border="1"></table>
-	<a href="#top">top</a>
+	<div class="top"><a href="#top">top</a></div></div>
 	<hr />
 	
-	<a class="section" name="delays_detailed" /><h2>Projects Delayed - detailed</h2>
-	<a href="#top">top</a>
+	<div class="section" id="delays_detailed" /><h2>Projects Delayed - detailed</h2>
+	<div class="top"><a href="#top">top</a></div></div>
 	<hr />
 	
-	<a class="section" name="gannt" /><h2>Gannt</h2>
-	<a href="#top">top</a>
+	<div class="section" id="gannt" /><h2>Gannt</h2>
+	<div class="top"><a href="#top">top</a></div></div>
 	<hr />
 	
-	<a class="section" name="timelines" /><h2>Timelines</h2>
-	<a href="#top">top</a>
+	<div class="section" id="timelines" /><h2>Timelines</h2>
+	<div class="top"><a href="#top">top</a></div></div>
 </body>
 </html>
