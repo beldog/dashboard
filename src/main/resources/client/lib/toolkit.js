@@ -10,7 +10,7 @@ var FORM_ELEMENTS = {'project_id': '4', 'country': '4', 'project_type':'20', 'da
 /** REST API **/
 
 /* Events */
-function getData(report, data, table){
+function getData(report, data, table, showActions){
 
 	var filter = $(data).val();
 
@@ -23,7 +23,7 @@ function getData(report, data, table){
 		data: {},
 		dataType: "json",
 		success: function (data) {
-			buildTable(table, data, true);
+			buildTable(table, data, showActions);
 		}
 	});
 
@@ -58,7 +58,7 @@ function deleteEvent(project_id, event_id){
 		type: 'DELETE',
 		url: "/rest/report/events/"+ project_id +"/"+ event_id,
 		success: function (data) {
-			getEvents();
+			getData("events", "#filterProjectId", "#excelEventsTable", true);
 		}
 	});
 
@@ -90,7 +90,7 @@ function loadListeners(){
 			data: $("#eventForm").serialize(), // serializes the form's elements.
 			success: function(data)
 			{
-				getEvents();
+				getData("events", "#filterProjectId", "#excelEventsTable", true);
 			}
 		});
 	
@@ -215,12 +215,12 @@ function enrichRow() {
 //Listeners
 $(document).ready(function() {
 	loadListeners();
-	getData("events", "#filterProjectId", "#excelEventsTable");
-	getData("launches", "#filterCountry", "#excelLaunchesTable");
+	getData("events", "#filterProjectId", "#excelEventsTable", true);
+	getData("launches", "#filterCountry", "#excelLaunchesTable", false);
 	
 	$("#eventForm #project_id").on("change", getLastEvent);
 	
-	$("#filterProjectId").on('change', function(event){getData("events", "#filterProjectId", "#excelEventsTable");});
-	$("#filterCountry").on('change', function(event){getData("launches", "#filterCountry", "#excelLaunchesTable");});
-	$("#filterMonth").on('change', function(event){getData("launches", "#filterMonth", "#excelLaunchesTable");});
+	$("#filterProjectId").on('change', function(event){getData("events", "#filterProjectId", "#excelEventsTable", true);});
+	$("#filterCountry").on('change', function(event){getData("launches", "#filterCountry", "#excelLaunchesTable", false);});
+	$("#filterMonth").on('change', function(event){getData("launches", "#filterMonth", "#excelLaunchesTable", false);});
 });
