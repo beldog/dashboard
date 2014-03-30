@@ -64,6 +64,7 @@ public class Dashboard {
     	cn_read = DriverManager.getConnection(urlString, username, password); 
 		cn_write = DriverManager.getConnection(urlString, username, password); 
 		cn_readHeavyLoad = DriverManager.getConnection(urlString, username, password);
+		
     }
     
     /**
