@@ -51,6 +51,7 @@ body{ margin: 0px; padding: 0px;}
 	padding-bottom: 2px;
 	color: darkblue;
 	font-weight: bolder;
+	z-index: 100;
 	
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
@@ -60,6 +61,14 @@ body{ margin: 0px; padding: 0px;}
 	-webkit-box-flex:1.0; /* Safari and Chrome */
 	-ms-flex:1.0; /* Internet Explorer 10 */
 	box-flex:1.0;;
+}
+
+#timelinePlot {
+	position: relative;
+	height: 100%;
+	width: 99%;
+	min-height: 100px;
+	z-index: 1;	
 }
 
 div.section {
@@ -87,16 +96,26 @@ div.top{
 </style>
 <script type="text/javascript" src="lib/jquery-1.10.2.min.js" /></script>
 <script type="text/javascript" src="lib/toolkit.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization',
+       'version':'1','packages':['timeline']}]}"></script>
 </head>
 <body onLoad="">
 	<div id="reports">
+		<div class="report" id="report_timelines">Timelines</div>
 		<div class="report" id="report_events">Events</div>
 		<div class="report" id="report_launches">Projects Launched</div>
 		<div class="report" id="report_delays">Projects Delayed</div>
-		<div class="report" id="report_gannt">Gannt</div>
-		<div class="report" id="report_timelines">Timelines</div>
 	</div>
 	<div id="top"/><h1>UK&Int Dashboard</h1></div>
+	
+	<div class="section" id="timelines" /><h2>Timelines</h2>
+	<label for="filterProjectIdTimeline">Filter by Project Id: </label>
+	<input type="text" name="filterProjectIdTimeline" value="517474"
+		id="filterProjectIdTimeline" size="4" />
+	<br />
+	<div id="timelinePlot"></div>
+	<div class="top"><a href="#top">top</a></div></div>
+	
 	<div class="section" id="events" /><h2>Events</h2>
 	<h3>Add new Event</h3>
 	<form id="eventForm">
@@ -143,14 +162,6 @@ div.top{
 		id="filterCountryDelay" size="4" />
 	<br />
 	<table id="excelDelaysTable" border="1"></table>
-	<div class="top"><a href="#top">top</a></div></div>
-	<hr />
-	
-	<div class="section" id="gannt" /><h2>Gannt</h2>
-	<div class="top"><a href="#top">top</a></div></div>
-	<hr />
-	
-	<div class="section" id="timelines" /><h2>Timelines</h2>
 	<div class="top"><a href="#top">top</a></div></div>
 </body>
 </html>
