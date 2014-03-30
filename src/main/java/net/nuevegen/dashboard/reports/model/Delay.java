@@ -1,7 +1,6 @@
 package net.nuevegen.dashboard.reports.model;
 
 import java.io.Serializable;
-import java.sql.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
