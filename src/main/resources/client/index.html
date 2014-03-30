@@ -12,8 +12,8 @@ body{ margin: 0px; padding: 0px;}
 
 #reports{
 	height: 25px;
-	text-align: center;
-	margin: 0px;
+	//text-align: center;
+	margin: 0px auto;
 	padding: 0px;
 	margin-bottom: 5px;
 	border: 1px solid #ffffff;
@@ -22,6 +22,7 @@ body{ margin: 0px; padding: 0px;}
 	left: 0px;
 	width: 100%;
 	background-color: #ffffff;
+	//align: center;
 
 	-webkit-border-bottom-right-radius: 10px;
 	-webkit-border-bottom-left-radius: 10px;
@@ -33,13 +34,32 @@ body{ margin: 0px; padding: 0px;}
     -moz-box-shadow: 0 0 10px #bdbdbd;
     -webkit-box-shadow: 0 0 10px #bdbdbd;
     box-shadow: 0 0 10px #bdbdbd;
+    
+	display:-moz-box; /* Firefox */
+	display:-webkit-box; /* Safari and Chrome */
+	display:-ms-flexbox; /* Internet Explorer 10 */
+	display:box;
+    
 }
 
 .report{
-	width: 16%;
-	float: left;
+	width: 100px;
+	//float: left;
 	text-align: center;
 	border: 0px solid;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	color: darkblue;
+	font-weight: bolder;
+	
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	
+	-moz-box-flex:1.0; /* Firefox */
+	-webkit-box-flex:1.0; /* Safari and Chrome */
+	-ms-flex:1.0; /* Internet Explorer 10 */
+	box-flex:1.0;;
 }
 
 div.section {
@@ -70,15 +90,14 @@ div.top{
 </head>
 <body onLoad="">
 	<div id="reports">
-		<div class="report"><a href="#events">Events</a></div>
-		<div class="report"><a href="#launches">Projects Launched</a></div>
-		<div class="report"><a href="#delays">Projects Delayed</a></div>
-		<div class="report"><a href="#delays_detailed">Projects detailed delayed</a></div>
-		<div class="report"><a href="#gannt">Gannt</a></div>
-		<div class="report"><a href="#timelines">Timelines</a></div>
+		<div class="report" id="report_events">Events</div>
+		<div class="report" id="report_launches">Projects Launched</div>
+		<div class="report" id="report_delays">Projects Delayed</div>
+		<div class="report" id="report_gannt">Gannt</div>
+		<div class="report" id="report_timelines">Timelines</div>
 	</div>
 	<div id="top"/><h1>UK&Int Dashboard</h1></div>
-	<div class="section" id="events"><h2>Events</h2>
+	<div class="section" id="events" /><h2>Events</h2>
 	<h3>Add new Event</h3>
 	<form id="eventForm">
 		<label for="project_id">Project Id</label><input type="text"
@@ -97,7 +116,7 @@ div.top{
 			id="createEvent" value="add" />
 	</form>
 
-	<h3>List of Events</h3>
+	<div class="section" id="events_list" /><h3>List of Events</h3>
 	<label for="filterProjectId">Filter by Project Id: </label>
 	<input type="text" name="filterProjectId" value="517474"
 		id="filterProjectId" size="4" />
@@ -119,15 +138,11 @@ div.top{
 	<hr />
 	
 	<div class="section" id="delays" /><h2>Projects Delayed</h2>
-	<label for="filterMonth">Filter by Country: </label>
-	<input type="text" name="filterMonth" value=""
-		id="filterMonth" size="4" />
+	<label for="filterCountryDelay">Filter by Country: </label>
+	<input type="text" name="filterCountryDelay" value=""
+		id="filterCountryDelay" size="4" />
 	<br />
-	<table id="excelDelayedTable" border="1"></table>
-	<div class="top"><a href="#top">top</a></div></div>
-	<hr />
-	
-	<div class="section" id="delays_detailed" /><h2>Projects Delayed - detailed</h2>
+	<table id="excelDelaysTable" border="1"></table>
 	<div class="top"><a href="#top">top</a></div></div>
 	<hr />
 	

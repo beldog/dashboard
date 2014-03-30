@@ -25,6 +25,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import net.nuevegen.dashboard.Dashboard;
+import net.nuevegen.dashboard.reports.model.Delay;
 import net.nuevegen.dashboard.reports.model.Event;
 import net.nuevegen.dashboard.reports.model.Launch;
 
@@ -46,7 +47,7 @@ public class Reports {
     	List<Event> events = new LinkedList<Event>(); 
     	try 
     	{
-    		Logger.getGlobal().log(Level.FINE, "Requesting all Events.");
+    		Logger.getLogger(this.getClass().getCanonicalName()).log(Level.FINE, "Requesting all Events.");
     		String query = "SELECT * FROM pm_project_event ORDER BY date DESC";
 
     		st = Dashboard.cn_readHeavyLoad.prepareStatement(query);
@@ -152,7 +153,7 @@ public class Reports {
     	List<Launch> launches = new LinkedList<Launch>(); 
     	try 
     	{
-    		Logger.getGlobal().log(Level.INFO, "Quering amount of projects launched filter by country: "+ country);
+    		Logger.getLogger(this.getClass().getCanonicalName()).log(Level.INFO, "Quering amount of projects launched filter by country: "+ country);
     		String query = "SELECT * FROM ukint_project_amount_launches WHERE 1 ";
 
     		if (country != null && country.trim().length()>0){
@@ -202,7 +203,7 @@ public class Reports {
     	List<Launch> launches = new LinkedList<Launch>(); 
     	try 
     	{
-    		Logger.getGlobal().log(Level.INFO, "Quering amount of projects launched filter by month: "+ month);
+    		Logger.getLogger(this.getClass().getCanonicalName()).log(Level.INFO, "Quering amount of projects launched filter by month: "+ month);
     		String query = "SELECT * FROM ukint_project_amount_launches_by_month WHERE 1 ";
 
     		if (month != null){
@@ -239,6 +240,60 @@ public class Reports {
     	}
     	
     	return launches;
+    }
+    
+    @GET
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("delays{country : (/[a-zA-Z]+)?}")
+    public List<Delay> getProjectsDelayed(@PathParam("country") String country) {
+    	
+    	PreparedStatement st = null;
+    	ResultSet rs = null;
+    	List<Delay> delays = new LinkedList<Delay>(); 
+    	try 
+    	{
+    		Logger.getLogger(this.getClass().getCanonicalName()).log(Level.INFO, "Quering amount of projects delayed filter by country: "+ country);
+    		String query = "SELECT * FROM ukint_project_delay_reports WHERE 1 ";
+
+    		if (country != null && country.trim().length()>0){
+    			query += "AND country='"+ country.replace("/", "") +"'";
+    		}
+    		
+    		st = Dashboard.cn_readHeavyLoad.prepareStatement(query);
+    		rs = st.executeQuery();
+    		
+    		while (rs.next()){
+    			Delay delay = new Delay();
+    			delay.setCountry(rs.getString("country"));
+    			delay.setMonth(rs.getString("Month"));
+    			delay.setTicket(rs.getString("Ticket"));
+    			delay.setProject_type(rs.getString("project type"));
+    			delay.setLaunched(rs.getBoolean("Launched"));
+    			delay.setRealLaunchDate(rs.getString("Real launch date"));
+    			delay.setPlannedLaunchDate(rs.getString("Planned launch date"));
+    			delay.setDelay(rs.getInt("Accumulated launch delay"));
+    			
+    			delays.add(delay);
+    		}
+    		
+    	} 
+    	catch (Exception e) 
+    	{
+    		System.out.println("Error querying db: "+ e.getMessage());
+    		e.printStackTrace();
+    	}
+    	finally{
+    		try{
+    			if(rs != null && !rs.isClosed()) rs.close();
+    			if(st != null && !st.isClosed()) st.close();
+    		}
+    		catch(SQLException e){
+    			e.printStackTrace();
+    		}
+    	}
+    	
+    	return delays;
     }
 
     

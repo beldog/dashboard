@@ -6,7 +6,6 @@
 var FORM_ELEMENTS = {'project_id': '4', 'country': '4', 'project_type':'20', 'date':'10', 
 						'type':'30', 'event':'30', 'impact':'4', 'reason':'30', 'timelines':'50'};
 
-
 /** REST API **/
 
 /* Events */
@@ -79,6 +78,84 @@ function updateEvent(project_id, event_id, data){
 
 }
 
+function loadReportsActions(){
+	//Reports interaction
+	$('#report_events')
+		.css('cursor', 'pointer')
+		.click(
+		    function(){
+		    	$('html, body').animate({scrollTop: $(".section#events").offset().top}, 200);
+		    })
+	    .hover(
+			function(){
+				$(this).css('background', '#A8C4E0');
+			},
+			function(){
+				$(this).css('background', '');
+			}
+	    );
+	
+	$('#report_launches')
+	.css('cursor', 'pointer')
+	.click(
+	    function(){
+	    	$('html, body').animate({scrollTop: $(".section#launches").offset().top}, 200);
+	    })
+    .hover(
+		function(){
+			$(this).css('background', '#A8C4E0');
+		},
+		function(){
+			$(this).css('background', '');
+		}
+    );
+	
+	$('#report_delays')
+	.css('cursor', 'pointer')
+	.click(
+	    function(){
+	    	$('html, body').animate({scrollTop: $(".section#delays").offset().top}, 200);
+	    })
+    .hover(
+		function(){
+			$(this).css('background', '#A8C4E0');
+		},
+		function(){
+			$(this).css('background', '');
+		}
+    );
+	
+	$('#report_gannt')
+	.css('cursor', 'pointer')
+	.click(
+	    function(){
+	    	$('html, body').animate({scrollTop: $(".section#gannt").offset().top}, 200);
+	    })
+    .hover(
+		function(){
+			$(this).css('background', '#A8C4E0');
+		},
+		function(){
+			$(this).css('background', '');
+		}
+    );
+	
+	$('#report_timelines')
+	.css('cursor', 'pointer')
+	.click(
+	    function(){
+	    	$('html, body').animate({scrollTop: $(".section#timelines").offset().top}, 200);
+	    })
+    .hover(
+		function(){
+			$(this).css('background', '#A8C4E0');
+		},
+		function(){
+			$(this).css('background', '');
+		}
+    );
+}
+
 function loadListeners(){
 	$("#eventForm").submit(function() {
 	
@@ -138,17 +215,28 @@ function buildTable(table, myList, actions) {
 		}
 
 		/* Actions set */
-		if(actions){
+		if(actions == 1){
 			//delete
 			row$.append($('<td/>').html($('<button/>',{
 				text: 'delete',
 				click: function(){ deleteEvent($(this).closest('tr').find('#project_id').text(), $(this).closest('tr').attr('event_id'))}
 			})));
 		}
+		else if (actions == 2){
+			//show details
+			row$.append($('<td/>').html($('<button/>',{
+				text: 'details',
+				click: function(){ 
+					$("#filterProjectId").val($(this).closest('tr').find('#ticket').text());
+					getData("events", "#filterProjectId", "#excelEventsTable", 1);
+					$('html, body').animate({scrollTop: $("#events_list").offset().top}, 100);
+				}
+			})));
+		}
 
 		$(table).append(row$.attr('event_id', event_id).attr('id', 'event'));
 		
-		if(actions){
+		if(actions == 1){
 			enrichRow();
 		}
 	}
@@ -214,13 +302,17 @@ function enrichRow() {
 
 //Listeners
 $(document).ready(function() {
+	loadReportsActions();
 	loadListeners();
-	getData("events", "#filterProjectId", "#excelEventsTable", true);
-	getData("launches", "#filterCountry", "#excelLaunchesTable", false);
+	getData("events", "#filterProjectId", "#excelEventsTable", 1);
+	getData("launches", "#filterCountry", "#excelLaunchesTable", 0);
+	getData("delays", "#filterCountryDelay", "#excelDelaysTable", 2);
 	
 	$("#eventForm #project_id").on("change", getLastEvent);
 	
-	$("#filterProjectId").on('change', function(event){getData("events", "#filterProjectId", "#excelEventsTable", true);});
-	$("#filterCountry").on('change', function(event){getData("launches", "#filterCountry", "#excelLaunchesTable", false);});
-	$("#filterMonth").on('change', function(event){getData("launches", "#filterMonth", "#excelLaunchesTable", false);});
+	$("#filterProjectId").on('change', function(event){getData("events", "#filterProjectId", "#excelEventsTable", 1);});
+	$("#filterCountry").on('change', function(event){getData("launches", "#filterCountry", "#excelLaunchesTable", 0);});
+	$("#filterMonth").on('change', function(event){getData("launches", "#filterMonth", "#excelLaunchesTable", 0);});
+	
+	$("#filterCountryDelay").on('change', function(event){getData("delays", "#filterCountryDelay", "#excelDelaysTable", 2);});
 });
