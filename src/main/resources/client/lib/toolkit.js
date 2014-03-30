@@ -300,6 +300,68 @@ function enrichRow() {
 	});
 }
 
+/**
+ * Source: https://google-developers.appspot.com/chart/interactive/docs/gallery/timeline
+ */
+function plotTimeline(data){
+	
+	var filter = $(data).val();
+
+	if (filter.length >0) filter = "/"+ filter;
+
+	$.ajax({
+		type: 'GET',
+		url: "/rest/report/timelines" + filter,
+		processData: true,
+		data: {},
+		dataType: "json",
+		success: function (data) {
+			var container = document.getElementById('timelinePlot');
+			var chart = new google.visualization.Timeline(container);
+			var dataTable = new google.visualization.DataTable();
+			
+			dataTable.addColumn({ type: 'string', id: 'Term' });
+			dataTable.addColumn({ type: 'string', id: 'Name' });
+			dataTable.addColumn({ type: 'date', id: 'Start' });
+			dataTable.addColumn({ type: 'date', id: 'End' });
+			
+			/*dataTable.addRows([
+				[ '1', 'George Washington', new Date(1789, 3, 29), new Date(1797, 2, 3) ],
+				[ '2', 'John Adams',        new Date(1797, 2, 3),  new Date(1801, 2, 3) ],
+				[ '3', 'Thomas Jefferson',  new Date(1801, 2, 3),  new Date(1809, 2, 3) ]]);
+			*/
+			
+			var rows = 0;
+			var phases = [];
+			$.each(data, function (i, item) {
+		        console.debug(item);
+	            var phase = [];
+	            id = item.country +"-"+ item.ticket;
+	            phase.push(id);
+	            phase.push(item.phase);
+	            phase.push(new Date(item.startDate));
+	            if(item.hasOwnProperty("endDate")) phase.push(new Date(item.endDate));
+	            else phase.push(new Date());
+	            phases.push(phase);
+		            
+	            i++;
+	            rows++;
+	        });
+			
+			var options = {
+				timeline: { colorByRowLabel: true },
+				avoidOverlappingGridLines: false,
+			};
+			 
+			dataTable.addRows(phases, options);
+			
+			$("#timelinePlot").height(rows/4*30);
+			console.debug("plot height: "+ $("#timelinePlot").height());
+			chart.draw(dataTable);
+			}
+	});
+}
+
 //Listeners
 $(document).ready(function() {
 	loadReportsActions();
@@ -307,6 +369,8 @@ $(document).ready(function() {
 	getData("events", "#filterProjectId", "#excelEventsTable", 1);
 	getData("launches", "#filterCountry", "#excelLaunchesTable", 0);
 	getData("delays", "#filterCountryDelay", "#excelDelaysTable", 2);
+	//google.setOnLoadCallback(plotTimeline); //timeline
+	plotTimeline("#filterProjectIdTimeline");
 	
 	$("#eventForm #project_id").on("change", getLastEvent);
 	
@@ -315,4 +379,5 @@ $(document).ready(function() {
 	$("#filterMonth").on('change', function(event){getData("launches", "#filterMonth", "#excelLaunchesTable", 0);});
 	
 	$("#filterCountryDelay").on('change', function(event){getData("delays", "#filterCountryDelay", "#excelDelaysTable", 2);});
+	$("#filterProjectIdTimeline").on('change', function(event){plotTimeline("#filterProjectIdTimeline")});
 });

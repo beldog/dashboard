@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -28,6 +29,7 @@ import net.nuevegen.dashboard.Dashboard;
 import net.nuevegen.dashboard.reports.model.Delay;
 import net.nuevegen.dashboard.reports.model.Event;
 import net.nuevegen.dashboard.reports.model.Launch;
+import net.nuevegen.dashboard.reports.model.Timeline;
 
 /**
  * Root resource (exposed at "report/{reportId}" path)
@@ -294,6 +296,60 @@ public class Reports {
     	}
     	
     	return delays;
+    }
+    
+    @GET
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("timelines{id : (/[a-zA-Z0-9]+)?}")
+    public List<Timeline> getTimelinesByProject(@PathParam("id") String id) {
+    	
+    	PreparedStatement st = null;
+    	ResultSet rs = null;
+    	List<Timeline> timelines = new LinkedList<Timeline>(); 
+    	try 
+    	{
+    		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+    		
+    		Logger.getLogger(this.getClass().getCanonicalName()).log(Level.INFO, "Quering project's timelines: "+ id);
+    		String query = "SELECT * FROM ukint_project_timelines_reports WHERE 1 ";
+
+    		if (id != null && id.trim().length()>0){
+    			query += "AND ticket='"+ id.replace("/", "") +"'";
+    		}
+    		
+    		st = Dashboard.cn_read.prepareStatement(query);
+    		rs = st.executeQuery();
+    		
+    		while (rs.next()){
+    			Timeline timeline = new Timeline();
+    			timeline.setCountry(rs.getString("Country"));
+    			timeline.setTicket(rs.getString("Ticket"));
+    			timeline.setPhase(rs.getString("Phase"));
+    			timeline.setStartDate(rs.getDate("Start"));
+    			if(rs.getString("End") != null) timeline.setEndDate(new Date(format.parse(rs.getString("End")).getTime()));
+    			timeline.setDays(rs.getInt("Days"));
+    			
+    			timelines.add(timeline);
+    		}
+    		
+    	} 
+    	catch (Exception e) 
+    	{
+    		System.out.println("Error querying db: "+ e.getMessage());
+    		e.printStackTrace();
+    	}
+    	finally{
+    		try{
+    			if(rs != null && !rs.isClosed()) rs.close();
+    			if(st != null && !st.isClosed()) st.close();
+    		}
+    		catch(SQLException e){
+    			e.printStackTrace();
+    		}
+    	}
+    	
+    	return timelines;
     }
 
     
