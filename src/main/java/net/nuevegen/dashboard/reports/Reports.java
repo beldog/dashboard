@@ -132,8 +132,13 @@ public class Reports {
 				events.add(event);
     		}
     		
-    		GenericEntity<List<Event>> entity = new GenericEntity<List<Event>>(events) {};
-    		response = Response.ok(entity).type(MediaType.APPLICATION_JSON_TYPE).build();
+    		if (events.size() > 0){
+	    		GenericEntity<List<Event>> entity = new GenericEntity<List<Event>>(events) {};
+	    		response = Response.ok(entity).type(MediaType.APPLICATION_JSON_TYPE).build();
+    		}
+    		else{
+    			response = Response.noContent().build();
+    		}
     		
     	} 
     	catch (Exception e) {
