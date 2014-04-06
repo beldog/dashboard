@@ -9,6 +9,23 @@ var FORM_ELEMENTS = {'project_id': '4', 'country': '4', 'project_type':'20', 'da
 /** REST API **/
 
 /* Events */
+
+function handleError(xhr, ajaxOptions, thrownError){
+	console.error(xhr.status +" / "+ xhr.responseText);
+	div = document.createElement("div");
+	
+	$(div).hover(function() {
+			$(this).stop(true, true)
+		}, 
+		function(){
+			$(this).delay(3000).fadeOut("slow", "linear");
+		});
+	
+	$("#console").append($(div).attr("id", "message").html("<b>There has been an error</b>:<br>"+ xhr.responseText).fadeIn("fast", "linear", function(){
+		$(this).delay(3000).fadeOut("slow", "linear");
+	}));
+}
+
 function getData(report, data, table, showActions){
 
 	var filter = $(data).val();
@@ -24,18 +41,7 @@ function getData(report, data, table, showActions){
 		success: function (data) {
 			buildTable(table, data, showActions);
 		},
-		error: function (xhr, ajaxOptions, thrownError){
-			console.error(xhr.status +" / "+ xhr.responseText);
-			div = document.createElement("div");
-			
-			$(div).hover(function() {
-				$(this).stop(true, true).delay(3000).fadeOut();
-			});
-			
-			$("#console").append($(div).attr("id", "message").html("<b>"+report +"</b>:<br>"+ xhr.responseText).fadeIn("fast", "linear", function(){
-				$(this).delay(3000).fadeOut();
-			}));
-		}
+		error: handleError
 	});
 
 }
@@ -57,7 +63,8 @@ function getLastEvent(){
 			//    populate($("#eventForm"), element);
 			//});
 			populate($("#eventForm"), data[0]);			               
-		}
+		},
+		error: handleError
 	});
 
 }
@@ -70,7 +77,8 @@ function deleteEvent(project_id, event_id){
 		url: "/rest/report/events/"+ project_id +"/"+ event_id,
 		success: function (data) {
 			getData("events", "#filterProjectId", "#excelEventsTable", true);
-		}
+		},
+		error: handleError
 	});
 
 }
@@ -85,7 +93,8 @@ function updateEvent(project_id, event_id, data){
 		url: "/rest/report/events/"+ project_id +"/"+ event_id,
 		success: function (data) {
 			console.debug("Event updated cussessfully: "+ event_id);
-		}
+		},
+		error: handleError
 	});
 
 }
@@ -180,7 +189,8 @@ function loadListeners(){
 			success: function(data)
 			{
 				getData("events", "#filterProjectId", "#excelEventsTable", true);
-			}
+			},
+			error: handleError
 		});
 	
 		//ev.stopPropagation();
@@ -214,42 +224,44 @@ function buildTable(table, myList, actions) {
 
 	var columns = addAllColumnHeaders(table, myList);
 
-	for (var i = 0 ; i < myList.length ; i++) {
-		var event_id = null;
-		var row$ = $('<tr/>');
-		for (var colIndex = 0 ; colIndex < columns.length ; colIndex++) {
-			var cellValue = myList[i][columns[colIndex]];
-
-			if (columns[colIndex] == "event_id") { event_id = cellValue; }
-			if (cellValue == null) { cellValue = ""; }
-
-			row$.append($('<td/>').attr('class','data').append($('<span/>').html(cellValue).attr('id', columns[colIndex])));
-		}
-
-		/* Actions set */
-		if(actions == 1){
-			//delete
-			row$.append($('<td/>').html($('<button/>',{
-				text: 'delete',
-				click: function(){ deleteEvent($(this).closest('tr').find('#project_id').text(), $(this).closest('tr').attr('event_id'))}
-			})));
-		}
-		else if (actions == 2){
-			//show details
-			row$.append($('<td/>').html($('<button/>',{
-				text: 'details',
-				click: function(){ 
-					$("#filterProjectId").val($(this).closest('tr').find('#ticket').text());
-					getData("events", "#filterProjectId", "#excelEventsTable", 1);
-					$('html, body').animate({scrollTop: $("#events_list").offset().top}, 100);
-				}
-			})));
-		}
-
-		$(table).append(row$.attr('event_id', event_id).attr('id', 'event'));
-		
-		if(actions == 1){
-			enrichRow();
+	if(myList != null){
+		for (var i = 0 ; i < myList.length ; i++) {
+			var event_id = null;
+			var row$ = $('<tr/>');
+			for (var colIndex = 0 ; colIndex < columns.length ; colIndex++) {
+				var cellValue = myList[i][columns[colIndex]];
+	
+				if (columns[colIndex] == "event_id") { event_id = cellValue; }
+				if (cellValue == null) { cellValue = ""; }
+	
+				row$.append($('<td/>').attr('class','data').append($('<span/>').html(cellValue).attr('id', columns[colIndex])));
+			}
+	
+			/* Actions set */
+			if(actions == 1){
+				//delete
+				row$.append($('<td/>').html($('<button/>',{
+					text: 'delete',
+					click: function(){ deleteEvent($(this).closest('tr').find('#project_id').text(), $(this).closest('tr').attr('event_id'))}
+				})));
+			}
+			else if (actions == 2){
+				//show details
+				row$.append($('<td/>').html($('<button/>',{
+					text: 'details',
+					click: function(){ 
+						$("#filterProjectId").val($(this).closest('tr').find('#ticket').text());
+						getData("events", "#filterProjectId", "#excelEventsTable", 1);
+						$('html, body').animate({scrollTop: $("#events_list").offset().top}, 100);
+					}
+				})));
+			}
+	
+			$(table).append(row$.attr('event_id', event_id).attr('id', 'event'));
+			
+			if(actions == 1){
+				enrichRow();
+			}
 		}
 	}
 }
@@ -260,13 +272,14 @@ function buildTable(table, myList, actions) {
 function addAllColumnHeaders(table, myList){
 	var columnSet = [];
 	var headerTr$ = $('<tr/>');
-
-	for (var i = 0 ; i < myList.length ; i++) {
-		var rowHash = myList[i];
-		for (var key in rowHash) {
-			if ($.inArray(key, columnSet) == -1){
-				columnSet.push(key);
-				headerTr$.append($('<th/>').html(key));
+	if(myList != null){
+		for (var i = 0 ; i < myList.length ; i++) {
+			var rowHash = myList[i];
+			for (var key in rowHash) {
+				if ($.inArray(key, columnSet) == -1){
+					columnSet.push(key);
+					headerTr$.append($('<th/>').html(key));
+				}
 			}
 		}
 	}
@@ -370,7 +383,8 @@ function plotTimeline(data){
 			$("#timelinePlot").height(rows/4*30);
 			console.debug("plot height: "+ $("#timelinePlot").height());
 			chart.draw(dataTable);
-			}
+		},
+		error: handleError
 	});
 }
 
