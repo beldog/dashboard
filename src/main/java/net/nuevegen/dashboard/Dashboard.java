@@ -25,6 +25,9 @@ import sun.misc.SignalHandler;
  */
 @SuppressWarnings("restriction")
 public class Dashboard {
+	
+	public static int MAX_DB_RETRIES = 3;
+	
     // Base URI the Grizzly HTTP server will listen on
     public static final String BASE_URI = "base_uri";
     public static final String DATABASE_CONNECTIONSTRING = "db_connection";
@@ -38,7 +41,6 @@ public class Dashboard {
     //TODO refactor to use JPA
     public static Connection cn_read;
     public static Connection cn_write;
-    public static Connection cn_readHeavyLoad;
     
     public static void loadConfiguration() 
     		throws FileNotFoundException, IOException {
@@ -54,17 +56,79 @@ public class Dashboard {
 //	    }
     }    
     
-    private static void setupDatabase() throws ClassNotFoundException, SQLException {
+    /**
+     * Timeout source: http://www.cubrid.org/blog/dev-platform/understanding-jdbc-internals-and-timeout-configuration/
+     */
+    private static Connection setupConnection() throws ClassNotFoundException, SQLException {
     	String urlString = properties.getProperty(DATABASE_CONNECTIONSTRING);
     	String username = properties.getProperty(DATABASE_USERNAME);
     	String password = properties.getProperty(DATABASE_PASSWORD);
     	
     	Class.forName("com.mysql.jdbc.Driver");
 
-    	cn_read = DriverManager.getConnection(urlString, username, password); 
-		cn_write = DriverManager.getConnection(urlString, username, password); 
-		cn_readHeavyLoad = DriverManager.getConnection(urlString, username, password);
-		
+		return DriverManager.getConnection(urlString, username, password);
+    }
+    
+    public static Connection getConnection(boolean write) throws SQLException, Exception{
+    	boolean retry = true;
+    	int tries = 0;
+    	Connection connection = null;
+    	
+    	if (write){
+    		while(retry && tries < MAX_DB_RETRIES) {
+	    		try{
+		    		if(cn_write != null && cn_write.isValid(3)){
+		    			connection = cn_write;
+		    		}
+		    		else{
+		    			connection = setupConnection();
+		    			cn_write = connection;
+		    		}
+		    		retry = false;
+	    		}
+	    		catch(SQLException e){
+	    			System.out.println("Error connection (sql error, try: "+ tries +"): "+ e.getMessage() +"/"+ e.getCause());
+	    			if (tries+1 >= MAX_DB_RETRIES){
+	    				throw e;
+	    			}
+	    		}
+	    		catch(ClassNotFoundException e){
+	    			retry = false;
+	    			System.out.println("Error connection (driver error): "+ e.getMessage() +"/"+ e.getCause());
+	    			throw e;
+	    		}
+    		tries++;
+    		}
+    	}
+    	else{
+    		while(retry && tries < MAX_DB_RETRIES) {
+	    		try{
+		    		if(cn_read != null && cn_read.isValid(3)){
+		    			connection = cn_read;
+		    		}
+		    		else{
+		    			connection = setupConnection();
+		    			connection.setReadOnly(write);
+		    			cn_read = connection;
+		    		}
+		    		retry = false;
+	    		}
+	    		catch(SQLException e){
+	    			System.out.println("Error connection (sql error, try: "+ tries +"): "+ e.getMessage());
+	    			if (tries+1 >= MAX_DB_RETRIES){
+	    				throw e;
+	    			}
+	    		}
+	    		catch(ClassNotFoundException e){
+	    			retry = false;
+	    			System.out.println("Error connection (driver error): "+ e.getMessage());
+	    			throw e;
+	    		}
+    		tries++;
+    		}
+    	}
+    	
+    	return connection;
     }
     
     /**
@@ -79,7 +143,7 @@ public class Dashboard {
     	loadConfiguration();
     	
     	//Set up database connectivity
-    	setupDatabase();
+    	//setupDatabase();
     	
         // create a resource config that scans for JAX-RS resources and providers
         // in net.nuevegen.dashboard package
@@ -136,6 +200,7 @@ public class Dashboard {
 	        }
     	}
     	catch(Exception e){
+    		System.out.println("Application error: "+ e.getMessage());
     		e.printStackTrace();
     		throw e;
     	}
@@ -143,9 +208,9 @@ public class Dashboard {
     		try{
     			if(cn_read != null && !cn_read.isClosed()) cn_read.close();
     			if(cn_write != null && !cn_write.isClosed()) cn_write.close();
-    			if(cn_readHeavyLoad != null && !cn_readHeavyLoad.isClosed()) cn_readHeavyLoad.close();
     		}
     		catch(SQLException e){
+    			System.out.println("Error closing connections: "+ e.getMessage());
     			e.printStackTrace();
     		}
     	}

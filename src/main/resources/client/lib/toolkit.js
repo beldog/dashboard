@@ -23,6 +23,18 @@ function getData(report, data, table, showActions){
 		dataType: "json",
 		success: function (data) {
 			buildTable(table, data, showActions);
+		},
+		error: function (xhr, ajaxOptions, thrownError){
+			console.error(xhr.status +" / "+ xhr.responseText);
+			div = document.createElement("div");
+			
+			$(div).hover(function() {
+				$(this).stop(true, true).delay(3000).fadeOut();
+			});
+			
+			$("#console").append($(div).attr("id", "message").html("<b>"+report +"</b>:<br>"+ xhr.responseText).fadeIn("fast", "linear", function(){
+				$(this).delay(3000).fadeOut();
+			}));
 		}
 	});
 
