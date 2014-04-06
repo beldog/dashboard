@@ -8,7 +8,58 @@
 <style type="text/css" title="currentStyle">
 /*@import "base.css";*/
 
-body{ margin: 0px; padding: 0px;}
+body{ 	
+	margin: 5px; 
+	padding: 0px;
+
+	color: #333333;
+	font-family: ‘Trebuchet MS’, Helvetica, sans-serif;
+}
+
+#console {
+	width: 100%;
+	margin: 10px;
+	position: fixed;
+    
+    -webkit-box-direction: column;
+    -moz-box-direction: column;
+	-ms-flex-direction: column;
+	
+	-webkit-align-items: flex-end;
+	align-items: flex-end;
+	
+	display: -moz-flex;
+	display: -ms-flex;
+	display: -webkit-flex;
+	display: flex;
+	
+	flex-flow: column;
+
+	z-index: 100;
+}
+
+#message {
+
+	width: 25%;
+	margin: 5px;
+	padding: 10px;
+	border: 1px solid #FF9494;
+	background: #FF9494;
+	
+
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	border-radius: 5px;	
+    
+    -moz-box-shadow: 0 0 2px #bdbdbd;
+    -webkit-box-shadow: 0 0 2px #bdbdbd;
+    box-shadow: 0 0 2px #bdbdbd;
+	
+	flex: auto;
+	z-index: 100;
+}
 
 #reports{
 	height: 25px;
@@ -39,7 +90,8 @@ body{ margin: 0px; padding: 0px;}
 	display:-webkit-box; /* Safari and Chrome */
 	display:-ms-flexbox; /* Internet Explorer 10 */
 	display:box;
-    
+	
+	z-index: 50;
 }
 
 .report{
@@ -51,7 +103,7 @@ body{ margin: 0px; padding: 0px;}
 	padding-bottom: 2px;
 	color: darkblue;
 	font-weight: bolder;
-	z-index: 100;
+	z-index: 51;
 	
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
@@ -99,7 +151,8 @@ div.top{
 <script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization',
        'version':'1','packages':['timeline']}]}"></script>
 </head>
-<body onLoad="">
+<body id="body">
+	<div id="console"></div>
 	<div id="reports">
 		<div class="report" id="report_timelines">Timelines</div>
 		<div class="report" id="report_events">Events</div>

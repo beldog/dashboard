@@ -1,4 +1,11 @@
+Biblio
+------
 Source: https://jersey.java.net/documentation/latest/user-guide.html#preface
+jdbc timeouts: http://www.cubrid.org/blog/dev-platform/understanding-jdbc-internals-and-timeout-configuration/
+common: http://stackoverflow.com/
+charts: https://google-developers.appspot.com/chart/interactive/docs/gallery
+colors: http://www.colourlovers.com/color/FF9494/error_red
+
 
 Project creation:
 $ mvn archetype:generate -DarchetypeArtifactId=jersey-quickstart-grizzly2 -DarchetypeGroupId=org.glassfish.jersey.archetypes -DinteractiveMode=false -DgroupId=net.nuevegen.dashboard -DartifactId=dashboard -Dpackage=net.nuevegen.dashboard
