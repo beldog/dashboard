@@ -9,6 +9,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import net.nuevegen.dashboard.reports.Reports;
 
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
@@ -25,6 +29,8 @@ import sun.misc.SignalHandler;
  */
 @SuppressWarnings("restriction")
 public class Dashboard {
+	
+	private static Logger logger = Logger.getLogger(Reports.class.getName());
 	
 	public static int MAX_DB_RETRIES = 3;
 	
@@ -87,14 +93,14 @@ public class Dashboard {
 		    		retry = false;
 	    		}
 	    		catch(SQLException e){
-	    			System.out.println("Error connection (sql error, try: "+ tries +"): "+ e.getMessage() +"/"+ e.getCause());
+	    			logger.log(Level.SEVERE, "Error connection (sql error, try: "+ tries +"): "+ e.getMessage() +"/"+ e.getCause());
 	    			if (tries+1 >= MAX_DB_RETRIES){
 	    				throw e;
 	    			}
 	    		}
 	    		catch(ClassNotFoundException e){
 	    			retry = false;
-	    			System.out.println("Error connection (driver error): "+ e.getMessage() +"/"+ e.getCause());
+	    			logger.log(Level.SEVERE, "Error connection (driver error): "+ e.getMessage() +"/"+ e.getCause());
 	    			throw e;
 	    		}
     		tries++;
@@ -114,14 +120,14 @@ public class Dashboard {
 		    		retry = false;
 	    		}
 	    		catch(SQLException e){
-	    			System.out.println("Error connection (sql error, try: "+ tries +"): "+ e.getMessage());
+	    			logger.log(Level.SEVERE, "Error connection (sql error, try: "+ tries +"): "+ e.getMessage() +"/"+ e.getCause());
 	    			if (tries+1 >= MAX_DB_RETRIES){
 	    				throw e;
 	    			}
 	    		}
 	    		catch(ClassNotFoundException e){
 	    			retry = false;
-	    			System.out.println("Error connection (driver error): "+ e.getMessage());
+	    			logger.log(Level.SEVERE, "Error connection (driver error): "+ e.getMessage() +"/"+ e.getCause());
 	    			throw e;
 	    		}
     		tries++;
@@ -167,8 +173,8 @@ public class Dashboard {
     		//Adding static resources like JS and HTML
     		server.getServerConfiguration().addHttpHandler(new StaticHttpHandler("./ui"),"/ui");          
             
-	    	System.out.println(String.format(Messages.getString("server.welcome") //$NON-NLS-1$
-	                + "%sapplication.wadl", properties.getProperty(BASE_URI))); //$NON-NLS-1$
+    		logger.log(Level.INFO, String.format(Messages.getString("server.welcome") //$NON-NLS-1$
+	                + "%sapplication.wadl", properties.getProperty(BASE_URI)));
 	 
 	        /*
 	         * Handleing system events for stop/reload
@@ -178,14 +184,14 @@ public class Dashboard {
 	            public void handle(Signal signal)
 	            {
 	                //reloadConfiguration();
-	            	System.out.println("Signal catched: "+ signal.getName() + ":"+ signal.getNumber());
+	            	logger.log(Level.INFO, "Signal catched: "+ signal.getName() + ":"+ signal.getNumber());
 	            }
 	        });
 	        
 	        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 	            public void run()
 	            {
-	                System.out.println(Messages.getString("server.farewell")); //$NON-NLS-1$
+	                logger.log(Level.INFO, Messages.getString("server.farewell")); //$NON-NLS-1$
 	            	server.stop();
 	            }
 	        }));
@@ -195,13 +201,12 @@ public class Dashboard {
 	            try {
 	                Thread.sleep(2000);
 	            } catch (InterruptedException e) {
-	                System.out.println("Caught an exception while sleeping. Description: " + e.getMessage());
+	            	logger.log(Level.SEVERE, "Caught an exception while sleeping. Description: " + e.getMessage() +" / "+ e.getCause());
 	            }
 	        }
     	}
     	catch(Exception e){
-    		System.out.println("Application error: "+ e.getMessage());
-    		e.printStackTrace();
+    		logger.log(Level.SEVERE, "Application error: "+ e.getMessage() +" / "+ e.getCause(), e);
     		throw e;
     	}
     	finally{
@@ -210,8 +215,7 @@ public class Dashboard {
     			if(cn_write != null && !cn_write.isClosed()) cn_write.close();
     		}
     		catch(SQLException e){
-    			System.out.println("Error closing connections: "+ e.getMessage());
-    			e.printStackTrace();
+    			logger.log(Level.SEVERE, "Error closing connections: "+ e.getMessage() +" / "+ e.getCause(), e);
     		}
     	}
         
