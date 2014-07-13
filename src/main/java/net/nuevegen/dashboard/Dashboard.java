@@ -194,7 +194,7 @@ public class Dashboard {
 	                logger.log(Level.INFO, Messages.getString("server.farewell")); //$NON-NLS-1$
 	            	server.stop();
 	            }
-	        }));
+	        }));	
 	                
 	        while(true){
 	 
