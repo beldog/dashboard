@@ -193,8 +193,6 @@ function loadListeners(){
 			error: handleError
 		});
 	
-		//ev.stopPropagation();
-		//ev.preventDefault(); // avoid to execute the actual submit of the form.
 		return false;
 	});
 }
