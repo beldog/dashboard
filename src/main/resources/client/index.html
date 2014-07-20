@@ -2,19 +2,16 @@
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ 	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="shortcut icon" type="image/ico" href="" />
 
 <title>UK&Int Dashboard</title>
 <style type="text/css" title="currentStyle">
 /*@import "base.css";*/
 
-body{ 	
-	margin: 5px; 
-	padding: 0px;
-
-	color: #333333;
-	font-family: ‘Trebuchet MS’, Helvetica, sans-serif;
-}
+body { padding-top: 50px; }
 
 #console {
 	width: 100%;
@@ -38,82 +35,6 @@ body{
 	z-index: 100;
 }
 
-#message {
-
-	width: 25%;
-	margin: 5px;
-	padding: 10px;
-	border: 1px solid #FF9494;
-	background: #FF9494;
-	
-
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-	border-radius: 5px;	
-    
-    -moz-box-shadow: 0 0 2px #bdbdbd;
-    -webkit-box-shadow: 0 0 2px #bdbdbd;
-    box-shadow: 0 0 2px #bdbdbd;
-	
-	flex: auto;
-	z-index: 100;
-}
-
-#reports{
-	height: 25px;
-	//text-align: center;
-	margin: 0px auto;
-	padding: 0px;
-	margin-bottom: 5px;
-	border: 1px solid #ffffff;
-	position: fixed;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	background-color: #ffffff;
-	//align: center;
-
-	-webkit-border-bottom-right-radius: 10px;
-	-webkit-border-bottom-left-radius: 10px;
-	-moz-border-radius-bottomright: 10px;
-	-moz-border-radius-bottomleft: 10px;
-	border-bottom-right-radius: 10px;
-	border-bottom-left-radius: 10px;	
-    
-    -moz-box-shadow: 0 0 10px #bdbdbd;
-    -webkit-box-shadow: 0 0 10px #bdbdbd;
-    box-shadow: 0 0 10px #bdbdbd;
-    
-	display:-moz-box; /* Firefox */
-	display:-webkit-box; /* Safari and Chrome */
-	display:-ms-flexbox; /* Internet Explorer 10 */
-	display:box;
-	
-	z-index: 50;
-}
-
-.report{
-	width: 100px;
-	//float: left;
-	text-align: center;
-	border: 0px solid;
-	padding-top: 2px;
-	padding-bottom: 2px;
-	color: darkblue;
-	font-weight: bolder;
-	z-index: 51;
-	
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
-	
-	-moz-box-flex:1.0; /* Firefox */
-	-webkit-box-flex:1.0; /* Safari and Chrome */
-	-ms-flex:1.0; /* Internet Explorer 10 */
-	box-flex:1.0;;
-}
 
 #timelinePlot {
 	position: relative;
@@ -123,98 +44,189 @@ body{
 	z-index: 1;	
 }
 
-div.section {
-	padding-top: 30px;
-	margin: 0px;
-}
 
-h1 {
-	margin: 0px;
-	padding-top: 30px;
-}
 
-h2 {
-	margin: 0px;
-}
-
-hr {
-	border: 1px dotted #dddddd;
-}
-
-div.top{
- text-align: center;
-
-}
 </style>
+
 <script type="text/javascript" src="lib/jquery-1.10.2.min.js" /></script>
+
+<!-- Bootstrap http://getbootstrap.com/getting-started/ -->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<!-- Bootstrap -->
+
 <script type="text/javascript" src="lib/toolkit.js"></script>
 <script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization',
        'version':'1','packages':['timeline']}]}"></script>
 </head>
-<body id="body">
+<body id="body" screen_capture_injected="true" role="document">
 	<div id="console"></div>
-	<div id="reports">
-		<div class="report" id="report_timelines">Timelines</div>
-		<div class="report" id="report_events">Events</div>
-		<div class="report" id="report_launches">Projects Launched</div>
-		<div class="report" id="report_delays">Projects Delayed</div>
+	<div id="top" />
+	<div class="container theme-showcase" role="main">
+	
+	<div class="navbar navbar-default navbar-fixed-top " role="navigation">
+		<div class="container">
+	         <div class="navbar-header">
+	           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	             <span class="sr-only">Toggle navigation</span>
+	             <span class="icon-bar"></span>
+	             <span class="icon-bar"></span>
+	             <span class="icon-bar"></span>
+	           </button>
+	           <a class="navbar-brand" href="#">UK&Int Dashboard</a>
+	         </div>
+	         <div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav">
+			        <li class="active"><a href="#timelines">Timelines</a></li>
+			        <li><a href="#report_events">Events</a></li>
+			        <li><a href="#report_launches">Projects Launched</a></li>
+			        <li><a href="#report_delays">Projects Delayed</a></li>
+				</ul>
+			</div>
+		</div>
 	</div>
-	<div id="top"/><h1>UK&Int Dashboard</h1></div>
+	<script type="text/javascript">
+	$('.nav li a').on('click', function() {
+	    $(this).parent().parent().find('.active').removeClass('active');
+	    $(this).parent().addClass('active');
+	});
+	</script>
+	<div class="page-header" id="timelines">
+		<h1>Timelines</h1>
+	</div>
+	<form class="form-horizontal" role="form" onSubmit="return flase;">
+		<div class="form-group">
+			<label class="col-sm-1 control-label" for="filterProjectIdTimeline">Filter by</label>
+			<div class="col-sm-2">
+				<input class="form-control" type="text" name="filterProjectIdTimeline" value="" id="filterProjectIdTimeline" placeholder="Project" />
+			</div>
+		</div>
+	</form>
+	<div id="timelinePlot" ></div>
+	<div class="top"><a href="#top">top</a></div>
 	
-	<div class="section" id="timelines" /><h2>Timelines</h2>
-	<label for="filterProjectIdTimeline">Filter by Project Id: </label>
-	<input type="text" name="filterProjectIdTimeline" value=""
-		id="filterProjectIdTimeline" size="4" />
-	<br />
-	<div id="timelinePlot"></div>
-	<div class="top"><a href="#top">top</a></div></div>
 	
-	<div class="section" id="events" /><h2>Events</h2>
-	<h3>Add new Event</h3>
-	<form id="eventForm">
-		<label for="project_id">Project Id</label><input type="text"
-			name="project_id" id="project_id" size="4" />
-		<label for="country">Country</label><input type="text" name="country"
-			id="country" size="4" /> <label for="project_type">Project
-			Type</label><input type="text" name="project_type" id="project_type"
-			size="20" /> <label for="date">Date</label><input type="text"
-			name="date" id="date" size="10" /> <label for="type">Type</label><input
-			type="text" name="type" id="type" size="30" /> <label for="event">Event</label><input
-			type="text" name="event" id="event" size="30" /> <label for="impact">Impact</label><input
-			type="text" name="impact" id="impact" size="4" /> <label for="reason">Reason</label><input
-			type="text" name="reason" id="reason" size="30" /> <label
-			for="timelines">Timelines</label><input type="text" name="timelines"
-			id="timelines" size="50" /> <input type="submit" name="submit"
-			id="createEvent" value="add" />
+	<div class="page-header" id="report_events">
+		<h1>Events</h1>
+	</div>
+	<h2>Add new Event</h2>
+	<form class="form-horizontal" role="form" id="eventForm">
+		<div class="form-group">
+			<label class="col-sm-2 control-label"  for="project_id">Project Id</label>
+			<div class="col-sm-10">
+				<input class="form-control" type="text" name="project_id" id="project_id" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label"  for="country">Country</label>
+			<div class="col-sm-10">
+				<input class="form-control" type="text" name="country" id="country" />
+			</div>
+		</div>
+		<div class="form-group">
+		<label class="col-sm-2 control-label" for="project_type">Project Type</label>
+		<div class="col-sm-10">
+			<input class="form-control" type="text" name="project_type" id="project_type" />
+		</div>
+		</div>
+		<div class="form-group"> 
+		<label class="col-sm-2 control-label" for="date">Date</label>
+		<div class="col-sm-10">
+		<input class="form-control" type="text" name="date" id="date" />
+		</div>
+		</div>
+		<div class="form-group"> 
+		<label class="col-sm-2 control-label" for="type">Type</label>
+		<div class="col-sm-10">
+			<input class="form-control" type="text" name="type" id="type" />
+		</div>
+		</div>
+		<div class="form-group"> 
+		<label class="col-sm-2 control-label" for="event">Event</label>
+		<div class="col-sm-10">
+			<input class="form-control" type="text" name="event" id="event"/>
+		</div>
+		</div>
+		<div class="form-group"> 
+		<label class="col-sm-2 control-label" for="impact">Impact</label>
+		<div class="col-sm-10">
+			<input class="form-control" type="text" name="impact" id="impact"/>
+		</div>
+		</div>
+		<div class="form-group"> 
+		<label class="col-sm-2 control-label" for="reason">Reason</label>
+		<div class="col-sm-10">
+			<input class="form-control" type="text" name="reason" id="reason"/>
+		</div>
+		</div>
+		<div class="form-group"> 
+		<label class="col-sm-2 control-label" for="timelines">Timelines</label>
+		<div class="col-sm-10">
+			<input class="form-control" type="text" name="timelines"	id="timelines"/>
+		</div>
+		</div>
+		<div class="form-group">
+    		<div class="col-sm-offset-2 col-sm-10">
+				<button name="submit" id="createEvent" class="btn btn-success" value="add" />add</button>
+			</div>
+		</div>
 	</form>
 
-	<div class="section" id="events_list" /><h3>Events list</h3>
-	<label for="filterProjectId">Filter by Project Id: </label>
-	<input type="text" name="filterProjectId" value="517474"
-		id="filterProjectId" size="4" />
+	<div class="page-header" id="events_list" >
+		<h2>Events list</h2>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-1 control-label" for="filterProjectId">Filter by</label>
+		<div class="col-sm-2">
+			<input class="form-control" type="text" name="filterProjectId" value="TEST" id="filterProjectId" placeholder="Project" />
+		</div>
+	</div>
 	<br />
-	<table id="excelEventsTable" border="1"></table>
-	<div class="top"><a href="#top">top</a></div></div>
-	<hr />
+	<div class="col-md">
+	<table class="table table-striped" id="excelEventsTable"></table>
+	</div>
+	<div class="top"><a href="#top">top</a></div>
 	
-	<div class="section" id="launches" /><h2>Amount of Launches</h2>
-	<label for="filterCountry">Filter by Country (XX): </label>
-	<input type="text" name="filterCountry" value=""
-		id="filterCountry" size="4" />
-	<label for="filterMonth">Month (YYYY-MM): </label>
-	<input type="text" name="filterMonth" value=""
-		id="filterMonth" size="4" />
+	<div class="page-header" id="report_launches" >
+		<h1>Amount of Launches</h1>
+	</div>
+	<form class="form-inline" role="form" onSubmit="return false;">
+	<div class="form-group">
+		<label class="sr-only" for="filterCountry">Filter by</label>
+		<input class="col-sm-2 form-control" type="text" name="filterCountry" value="" id="filterCountry" placeholder="Country (XX)" />
+	</div>
+	<div class="form-group">
+		<label class="sr-only" for="filterMonth">Filter by</label>
+		<input class="col-sm-2 form-control" type="text" name="filterMonth" value="" id="filterMonth" placeholder="Month (YYYY-MM)" />
+	</div>
+	</form>
 	<br />
-	<table id="excelLaunchesTable" border="1"></table>
-	<div class="top"><a href="#top">top</a></div></div>
-	<hr />
+	<div class="col-md">
+	<table class="table table-striped" id="excelLaunchesTable"></table>
+	</div>
+	<div class="top"><a href="#top">top</a></div>
 	
-	<div class="section" id="delays" /><h2>Projects Delayed</h2>
-	<label for="filterCountryDelay">Filter by Country: </label>
-	<input type="text" name="filterCountryDelay" value=""
-		id="filterCountryDelay" size="4" />
+	<div class="page-header" id="report_delays" >
+		<h1>Projects Delayed</h1>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-1 control-label" for="filterCountryDelay">Filter by</label>
+		<div class="col-sm-2">
+			<input class="form-control" type="text" name="filterCountryDelay" value="" id="filterCountryDelay" placeholder="Country" />
+		</div>
+	</div>
+	
 	<br />
-	<table id="excelDelaysTable" border="1"></table>
-	<div class="top"><a href="#top">top</a></div></div>
+	<div class="col-md">
+	<table class="table table-striped" id="excelDelaysTable"></table>
+	</div>
+	<div class="top"><a href="#top">top</a></div>
+	</div>
 </body>
 </html>

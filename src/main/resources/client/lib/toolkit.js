@@ -11,6 +11,17 @@ var FORM_ELEMENTS = {'project_id': '4', 'country': '4', 'project_type':'20', 'da
 /* Events */
 
 function handleError(xhr, ajaxOptions, thrownError){
+	showMessageOnConsole(xhr, ajaxOptions, thrownError, "danger")
+}	
+
+/**
+ * 
+ * @param xhr
+ * @param ajaxOptions
+ * @param thrownError
+ * @param type Possible values: success, info, warning or danger
+ */
+function showMessageOnConsole(xhr, ajaxOptions, errorMessage, type){
 	console.error(xhr.status +" / "+ xhr.responseText);
 	div = document.createElement("div");
 	
@@ -21,10 +32,12 @@ function handleError(xhr, ajaxOptions, thrownError){
 			$(this).delay(3000).fadeOut("slow", "linear");
 		});
 	
-	$("#console").append($(div).attr("id", "message").html("<b>There has been an error</b>:<br>"+ xhr.responseText).fadeIn("fast", "linear", function(){
+	$("#console").append($(div).attr("class", "alert alert-"+ type).html(""+ errorMessage).fadeIn("fast", "linear", function(){
 		$(this).delay(3000).fadeOut("slow", "linear");
 	}));
 }
+
+
 
 function getData(report, data, table, showActions){
 
@@ -77,6 +90,7 @@ function deleteEvent(project_id, event_id){
 		url: "/rest/report/events/"+ project_id +"/"+ event_id,
 		success: function (data) {
 			getData("events", "#filterProjectId", "#excelEventsTable", true);
+			showMessageOnConsole(XMLHttpRequest, null, "Event "+ event_id +" successfully deleted from the project "+ project_id, "success")
 		},
 		error: handleError
 	});
@@ -93,6 +107,7 @@ function updateEvent(project_id, event_id, data){
 		url: "/rest/report/events/"+ project_id +"/"+ event_id,
 		success: function (data) {
 			console.debug("Event updated cussessfully: "+ event_id);
+			showMessageOnConsole(XMLHttpRequest, null, "Event "+ event_id +" successfully updated", "success")
 		},
 		error: handleError
 	});
@@ -189,6 +204,7 @@ function loadListeners(){
 			success: function(data)
 			{
 				getData("events", "#filterProjectId", "#excelEventsTable", true);
+				showMessageOnConsole(XMLHttpRequest, null, "New event successfully added to the project", "success")
 			},
 			error: handleError
 		});
@@ -241,7 +257,7 @@ function buildTable(table, myList, actions) {
 				row$.append($('<td/>').html($('<button/>',{
 					text: 'delete',
 					click: function(){ deleteEvent($(this).closest('tr').find('#project_id').text(), $(this).closest('tr').attr('event_id'))}
-				})));
+				}).addClass('btn btn-danger')));
 			}
 			else if (actions == 2){
 				//show details
@@ -252,7 +268,7 @@ function buildTable(table, myList, actions) {
 						getData("events", "#filterProjectId", "#excelEventsTable", 1);
 						$('html, body').animate({scrollTop: $("#events_list").offset().top}, 100);
 					}
-				})));
+				}).addClass('btn btn-info')));
 			}
 	
 			$(table).append(row$.attr('event_id', event_id).attr('id', 'event'));
@@ -269,6 +285,7 @@ function buildTable(table, myList, actions) {
 // all records
 function addAllColumnHeaders(table, myList){
 	var columnSet = [];
+	var header$ = $('<thead/>');
 	var headerTr$ = $('<tr/>');
 	if(myList != null){
 		for (var i = 0 ; i < myList.length ; i++) {
@@ -281,7 +298,8 @@ function addAllColumnHeaders(table, myList){
 			}
 		}
 	}
-	$(table).html(headerTr$);
+	header$.append(headerTr$)
+	$(table).html(header$);
 	return columnSet;
 }
 
