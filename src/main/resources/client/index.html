@@ -1,13 +1,12 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
- 	<meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="shortcut icon" type="image/ico" href="" />
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" type="image/ico" href="null">
 
-<title>UK&Int Dashboard</title>
+<title>UK&amp;Int Dashboard</title>
 <style type="text/css" title="currentStyle">
 /*@import "base.css";*/
 
@@ -48,7 +47,7 @@ body { padding-top: 50px; }
 
 </style>
 
-<script type="text/javascript" src="lib/jquery-1.10.2.min.js" /></script>
+<script type="text/javascript" src="lib/jquery-1.10.2.min.js"></script>
 
 <!-- Bootstrap http://getbootstrap.com/getting-started/ -->
 <!-- Latest compiled and minified CSS -->
@@ -67,166 +66,167 @@ body { padding-top: 50px; }
 </head>
 <body id="body" screen_capture_injected="true" role="document">
 	<div id="console"></div>
-	<div id="top" />
+	<div id="top"></div>
 	<div class="container theme-showcase" role="main">
-	
-	<div class="navbar navbar-default navbar-fixed-top " role="navigation">
-		<div class="container">
-	         <div class="navbar-header">
-	           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-	             <span class="sr-only">Toggle navigation</span>
-	             <span class="icon-bar"></span>
-	             <span class="icon-bar"></span>
-	             <span class="icon-bar"></span>
-	           </button>
-	           <a class="navbar-brand" href="#">UK&Int Dashboard</a>
-	         </div>
-	         <div class="navbar-collapse collapse">
-				<ul class="nav navbar-nav">
-			        <li class="active"><a href="#timelines">Timelines</a></li>
-			        <li><a href="#report_events">Events</a></li>
-			        <li><a href="#report_launches">Projects Launched</a></li>
-			        <li><a href="#report_delays">Projects Delayed</a></li>
-				</ul>
+		<div class="navbar navbar-default navbar-fixed-top " role="navigation">
+			<div class="container">
+		         <div class="navbar-header">
+		           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		             <span class="sr-only">Toggle navigation</span>
+		             <span class="icon-bar"></span>
+		             <span class="icon-bar"></span>
+		             <span class="icon-bar"></span>
+		           </button>
+		           <a class="navbar-brand" href="#">UK&amp;Int Dashboard</a>
+		         </div>
+		         <div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav">
+				        <li class="active"><a href="#report_timelines">Timelines</a></li>
+				        <li><a href="#report_events">Events</a></li>
+				        <li><a href="#report_launches">Projects Launched</a></li>
+				        <li><a href="#report_delays">Projects Delayed</a></li>
+					</ul>
+				</div>
 			</div>
 		</div>
-	</div>
-	<script type="text/javascript">
-	$('.nav li a').on('click', function() {
-	    $(this).parent().parent().find('.active').removeClass('active');
-	    $(this).parent().addClass('active');
-	});
-	</script>
-	<div class="page-header" id="timelines">
-		<h1>Timelines</h1>
-	</div>
-	<form class="form-horizontal" role="form" onSubmit="return flase;">
+		<script type="text/javascript">
+		<!--
+		$('.nav li a').on('click', function() {
+		    $(this).parent().parent().find('.active').removeClass('active');
+		    $(this).parent().addClass('active');
+		});
+		-->;
+		</script>
+		<div class="page-header" id="report_timelines">
+			<h1>Timelines</h1>
+		</div>
+		<form class="form-horizontal" role="form" onSubmit="return flase;">
+			<div class="form-group">
+				<label class="col-sm-1 control-label" for="filterProjectIdTimeline">Filter by</label>
+				<div class="col-sm-2">
+					<input class="form-control" type="text" name="filterProjectIdTimeline" value="" id="filterProjectIdTimeline" placeholder="Project" />
+				</div>
+			</div>
+		</form>
+		<div id="timelinePlot" ></div>
+		<div class="top"><a href="#top">top</a></div>
+		
+		
+		<div class="page-header" id="report_events">
+			<h1>Events</h1>
+		</div>
+		<h2>Add new Event</h2>
+		<form class="form-horizontal" role="form" id="eventForm">
+			<div class="form-group">
+				<label class="col-sm-2 control-label"  for="project_id">Project Id</label>
+				<div class="col-sm-10">
+					<input class="form-control" type="text" name="project_id" id="project_id" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label"  for="country">Country</label>
+				<div class="col-sm-10">
+					<input class="form-control" type="text" name="country" id="country" />
+				</div>
+			</div>
+			<div class="form-group">
+			<label class="col-sm-2 control-label" for="project_type">Project Type</label>
+			<div class="col-sm-10">
+				<input class="form-control" type="text" name="project_type" id="project_type" />
+			</div>
+			</div>
+			<div class="form-group"> 
+			<label class="col-sm-2 control-label" for="date">Date</label>
+			<div class="col-sm-10">
+			<input class="form-control" type="text" name="date" id="date" />
+			</div>
+			</div>
+			<div class="form-group"> 
+			<label class="col-sm-2 control-label" for="type">Type</label>
+			<div class="col-sm-10">
+				<input class="form-control" type="text" name="type" id="type" />
+			</div>
+			</div>
+			<div class="form-group"> 
+			<label class="col-sm-2 control-label" for="event">Event</label>
+			<div class="col-sm-10">
+				<input class="form-control" type="text" name="event" id="event"/>
+			</div>
+			</div>
+			<div class="form-group"> 
+			<label class="col-sm-2 control-label" for="impact">Impact</label>
+			<div class="col-sm-10">
+				<input class="form-control" type="text" name="impact" id="impact"/>
+			</div>
+			</div>
+			<div class="form-group"> 
+			<label class="col-sm-2 control-label" for="reason">Reason</label>
+			<div class="col-sm-10">
+				<input class="form-control" type="text" name="reason" id="reason"/>
+			</div>
+			</div>
+			<div class="form-group"> 
+			<label class="col-sm-2 control-label" for="timelines">Timelines</label>
+			<div class="col-sm-10">
+				<input class="form-control" type="text" name="timelines"	id="timelines"/>
+			</div>
+			</div>
+			<div class="form-group">
+	    		<div class="col-sm-offset-2 col-sm-10">
+					<button name="submit" id="createEvent" class="btn btn-success" value="add">add</button>
+				</div>
+			</div>
+		</form>
+	
+		<div class="page-header" id="events_list" >
+			<h2>Events list</h2>
+		</div>
 		<div class="form-group">
-			<label class="col-sm-1 control-label" for="filterProjectIdTimeline">Filter by</label>
+			<label class="col-sm-1 control-label" for="filterProjectId">Filter by</label>
 			<div class="col-sm-2">
-				<input class="form-control" type="text" name="filterProjectIdTimeline" value="" id="filterProjectIdTimeline" placeholder="Project" />
+				<input class="form-control" type="text" name="filterProjectId" value="TEST" id="filterProjectId" placeholder="Project" />
 			</div>
 		</div>
-	</form>
-	<div id="timelinePlot" ></div>
-	<div class="top"><a href="#top">top</a></div>
-	
-	
-	<div class="page-header" id="report_events">
-		<h1>Events</h1>
-	</div>
-	<h2>Add new Event</h2>
-	<form class="form-horizontal" role="form" id="eventForm">
+		<br />
+		<div class="col-md">
+		<table class="table table-striped" id="excelEventsTable"></table>
+		</div>
+		<div class="top"><a href="#top">top</a></div>
+		
+		<div class="page-header" id="report_launches" >
+			<h1>Amount of Launches</h1>
+		</div>
+		<form class="form-inline" role="form" onSubmit="return false;">
 		<div class="form-group">
-			<label class="col-sm-2 control-label"  for="project_id">Project Id</label>
-			<div class="col-sm-10">
-				<input class="form-control" type="text" name="project_id" id="project_id" />
+			<label class="sr-only" for="filterCountry">Filter by</label>
+			<input class="col-sm-2 form-control" type="text" name="filterCountry" value="" id="filterCountry" placeholder="Country (XX)" />
+		</div>
+		<div class="form-group">
+			<label class="sr-only" for="filterMonth">Filter by</label>
+			<input class="col-sm-2 form-control" type="text" name="filterMonth" value="" id="filterMonth" placeholder="Month (YYYY-MM)" />
+		</div>
+		</form>
+		<br />
+		<div class="col-md">
+		<table class="table table-striped" id="excelLaunchesTable"></table>
+		</div>
+		<div class="top"><a href="#top">top</a></div>
+		
+		<div class="page-header" id="report_delays" >
+			<h1>Projects Delayed</h1>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-1 control-label" for="filterCountryDelay">Filter by</label>
+			<div class="col-sm-2">
+				<input class="form-control" type="text" name="filterCountryDelay" value="" id="filterCountryDelay" placeholder="Country" />
 			</div>
 		</div>
-		<div class="form-group">
-			<label class="col-sm-2 control-label"  for="country">Country</label>
-			<div class="col-sm-10">
-				<input class="form-control" type="text" name="country" id="country" />
-			</div>
+		
+		<br />
+		<div class="col-md">
+			<table class="table table-striped" id="excelDelaysTable"></table>
 		</div>
-		<div class="form-group">
-		<label class="col-sm-2 control-label" for="project_type">Project Type</label>
-		<div class="col-sm-10">
-			<input class="form-control" type="text" name="project_type" id="project_type" />
-		</div>
-		</div>
-		<div class="form-group"> 
-		<label class="col-sm-2 control-label" for="date">Date</label>
-		<div class="col-sm-10">
-		<input class="form-control" type="text" name="date" id="date" />
-		</div>
-		</div>
-		<div class="form-group"> 
-		<label class="col-sm-2 control-label" for="type">Type</label>
-		<div class="col-sm-10">
-			<input class="form-control" type="text" name="type" id="type" />
-		</div>
-		</div>
-		<div class="form-group"> 
-		<label class="col-sm-2 control-label" for="event">Event</label>
-		<div class="col-sm-10">
-			<input class="form-control" type="text" name="event" id="event"/>
-		</div>
-		</div>
-		<div class="form-group"> 
-		<label class="col-sm-2 control-label" for="impact">Impact</label>
-		<div class="col-sm-10">
-			<input class="form-control" type="text" name="impact" id="impact"/>
-		</div>
-		</div>
-		<div class="form-group"> 
-		<label class="col-sm-2 control-label" for="reason">Reason</label>
-		<div class="col-sm-10">
-			<input class="form-control" type="text" name="reason" id="reason"/>
-		</div>
-		</div>
-		<div class="form-group"> 
-		<label class="col-sm-2 control-label" for="timelines">Timelines</label>
-		<div class="col-sm-10">
-			<input class="form-control" type="text" name="timelines"	id="timelines"/>
-		</div>
-		</div>
-		<div class="form-group">
-    		<div class="col-sm-offset-2 col-sm-10">
-				<button name="submit" id="createEvent" class="btn btn-success" value="add" />add</button>
-			</div>
-		</div>
-	</form>
-
-	<div class="page-header" id="events_list" >
-		<h2>Events list</h2>
-	</div>
-	<div class="form-group">
-		<label class="col-sm-1 control-label" for="filterProjectId">Filter by</label>
-		<div class="col-sm-2">
-			<input class="form-control" type="text" name="filterProjectId" value="TEST" id="filterProjectId" placeholder="Project" />
-		</div>
-	</div>
-	<br />
-	<div class="col-md">
-	<table class="table table-striped" id="excelEventsTable"></table>
-	</div>
-	<div class="top"><a href="#top">top</a></div>
-	
-	<div class="page-header" id="report_launches" >
-		<h1>Amount of Launches</h1>
-	</div>
-	<form class="form-inline" role="form" onSubmit="return false;">
-	<div class="form-group">
-		<label class="sr-only" for="filterCountry">Filter by</label>
-		<input class="col-sm-2 form-control" type="text" name="filterCountry" value="" id="filterCountry" placeholder="Country (XX)" />
-	</div>
-	<div class="form-group">
-		<label class="sr-only" for="filterMonth">Filter by</label>
-		<input class="col-sm-2 form-control" type="text" name="filterMonth" value="" id="filterMonth" placeholder="Month (YYYY-MM)" />
-	</div>
-	</form>
-	<br />
-	<div class="col-md">
-	<table class="table table-striped" id="excelLaunchesTable"></table>
-	</div>
-	<div class="top"><a href="#top">top</a></div>
-	
-	<div class="page-header" id="report_delays" >
-		<h1>Projects Delayed</h1>
-	</div>
-	<div class="form-group">
-		<label class="col-sm-1 control-label" for="filterCountryDelay">Filter by</label>
-		<div class="col-sm-2">
-			<input class="form-control" type="text" name="filterCountryDelay" value="" id="filterCountryDelay" placeholder="Country" />
-		</div>
-	</div>
-	
-	<br />
-	<div class="col-md">
-	<table class="table table-striped" id="excelDelaysTable"></table>
-	</div>
-	<div class="top"><a href="#top">top</a></div>
+		<div class="top"><a href="#top">top</a></div>
 	</div>
 </body>
 </html>
