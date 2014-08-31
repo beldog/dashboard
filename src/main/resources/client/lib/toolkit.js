@@ -8,6 +8,8 @@ var FORM_ELEMENTS = {'project_id': '4', 'country': '4', 'project_type':'20', 'da
 
 /** REST API **/
 
+var timeline = undefined;
+
 /* Events */
 
 function handleError(xhr, ajaxOptions, thrownError){
@@ -341,9 +343,61 @@ function enrichRow() {
 	});
 }
 
+var drawProjectsData = null;
+
 /**
  * Source: https://google-developers.appspot.com/chart/interactive/docs/gallery/timeline
  */
+function drawProjects(data) {
+	var container = document.getElementById('timelinePlot');
+	var chart = new google.visualization.Timeline(container);
+	var dataTable = new google.visualization.DataTable();
+	
+	dataTable.addColumn({ type: 'string', id: 'Term' });
+	dataTable.addColumn({ type: 'string', id: 'Name' });
+	dataTable.addColumn({ type: 'date', id: 'Start' });
+	dataTable.addColumn({ type: 'date', id: 'End' });
+	dataTable.addColumn({type: 'string', role: 'tooltip'});
+	
+	/*dataTable.addRows([
+		[ '1', 'George Washington', new Date(1789, 3, 29), new Date(1797, 2, 3) ],
+		[ '2', 'John Adams',        new Date(1797, 2, 3),  new Date(1801, 2, 3) ],
+		[ '3', 'Thomas Jefferson',  new Date(1801, 2, 3),  new Date(1809, 2, 3) ]]);
+	*/
+	
+	var rows = 0;
+	var phases = [];
+	$.each(data, function (i, item) {
+        //console.debug(item);
+        var phase = [];
+        id = item.country +"-"+ item.ticket;
+        phase.push(id);
+        phase.push(item.phase);
+        phase.push(new Date(item.startDate));
+        if(item.hasOwnProperty("endDate")) phase.push(new Date(item.endDate));
+        else phase.push(new Date());
+        phase.push("ToolTip yeah!");
+        phases.push(phase);
+            
+        i++;
+        rows++;
+    });
+	
+	//console.debug(phases);
+	var options = {
+		timeline: { colorByRowLabel: true },
+		avoidOverlappingGridLines: true,
+		enableInteractivity: true
+	};
+	 
+	dataTable.addRows(phases, options);
+	
+	$("#timelinePlot").height(rows/4*30);
+	console.debug("plot height: "+ $("#timelinePlot").height());
+	
+	chart.draw(dataTable);
+}
+
 function plotTimeline(data){
 	
 	var filter = $(data).val();
@@ -356,53 +410,18 @@ function plotTimeline(data){
 		processData: true,
 		data: {},
 		dataType: "json",
-		success: function (data) {
-			var container = document.getElementById('timelinePlot');
-			var chart = new google.visualization.Timeline(container);
-			var dataTable = new google.visualization.DataTable();
-			
-			dataTable.addColumn({ type: 'string', id: 'Term' });
-			dataTable.addColumn({ type: 'string', id: 'Name' });
-			dataTable.addColumn({ type: 'date', id: 'Start' });
-			dataTable.addColumn({ type: 'date', id: 'End' });
-			
-			/*dataTable.addRows([
-				[ '1', 'George Washington', new Date(1789, 3, 29), new Date(1797, 2, 3) ],
-				[ '2', 'John Adams',        new Date(1797, 2, 3),  new Date(1801, 2, 3) ],
-				[ '3', 'Thomas Jefferson',  new Date(1801, 2, 3),  new Date(1809, 2, 3) ]]);
-			*/
-			
-			var rows = 0;
-			var phases = [];
-			$.each(data, function (i, item) {
-		        console.debug(item);
-	            var phase = [];
-	            id = item.country +"-"+ item.ticket;
-	            phase.push(id);
-	            phase.push(item.phase);
-	            phase.push(new Date(item.startDate));
-	            if(item.hasOwnProperty("endDate")) phase.push(new Date(item.endDate));
-	            else phase.push(new Date());
-	            phases.push(phase);
-		            
-	            i++;
-	            rows++;
-	        });
-			
-			var options = {
-				timeline: { colorByRowLabel: true },
-				avoidOverlappingGridLines: false,
-			};
-			 
-			dataTable.addRows(phases, options);
-			
-			$("#timelinePlot").height(rows/4*30);
-			console.debug("plot height: "+ $("#timelinePlot").height());
-			chart.draw(dataTable);
+		success: function(data){
+			drawProjectsData = data;
+			drawProjects(drawProjectsData);
 		},
 		error: handleError
 	});
 }
+
+$(window).resize(function(){
+	drawProjects(drawProjectsData);
+});
+
 
 //Listeners
 $(document).ready(function() {
@@ -411,8 +430,7 @@ $(document).ready(function() {
 	getData("events", "#filterProjectId", "#excelEventsTable", 1);
 	getData("launches", "#filterCountry", "#excelLaunchesTable", 0);
 	getData("delays", "#filterCountryDelay", "#excelDelaysTable", 2);
-	//google.setOnLoadCallback(plotTimeline); //timeline
-	plotTimeline("#filterProjectIdTimeline");
+	google.setOnLoadCallback(plotTimeline("#filterProjectIdTimeline")); //timeline
 	
 	$("#eventForm #project_id").on("change", getLastEvent);
 	

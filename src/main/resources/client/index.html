@@ -95,16 +95,16 @@ body { padding-top: 50px; }
 		    $(this).parent().parent().find('.active').removeClass('active');
 		    $(this).parent().addClass('active');
 		});
-		-->;
+		-->
 		</script>
 		<div class="page-header" id="report_timelines">
 			<h1>Timelines</h1>
 		</div>
-		<form class="form-horizontal" role="form" onSubmit="return flase;">
+		<form class="form-horizontal" role="form" onSubmit="return false;">
 			<div class="form-group">
 				<label class="col-sm-1 control-label" for="filterProjectIdTimeline">Filter by</label>
 				<div class="col-sm-2">
-					<input class="form-control" type="text" name="filterProjectIdTimeline" value="" id="filterProjectIdTimeline" placeholder="Project" />
+					<input class="form-control" type="text" name="filterProjectIdTimeline" value="517474" id="filterProjectIdTimeline" placeholder="Project" />
 				</div>
 			</div>
 		</form>
@@ -120,7 +120,7 @@ body { padding-top: 50px; }
 			<div class="form-group">
 				<label class="col-sm-2 control-label"  for="project_id">Project Id</label>
 				<div class="col-sm-10">
-					<input class="form-control" type="text" name="project_id" id="project_id" />
+					<input class="form-control" type="text" name="project_id" id="project_id" value=""/>
 				</div>
 			</div>
 			<div class="form-group">
@@ -184,7 +184,7 @@ body { padding-top: 50px; }
 		<div class="form-group">
 			<label class="col-sm-1 control-label" for="filterProjectId">Filter by</label>
 			<div class="col-sm-2">
-				<input class="form-control" type="text" name="filterProjectId" value="TEST" id="filterProjectId" placeholder="Project" />
+				<input class="form-control" type="text" name="filterProjectId" value="517474" id="filterProjectId" placeholder="Project" />
 			</div>
 		</div>
 		<br />
@@ -199,7 +199,7 @@ body { padding-top: 50px; }
 		<form class="form-inline" role="form" onSubmit="return false;">
 		<div class="form-group">
 			<label class="sr-only" for="filterCountry">Filter by</label>
-			<input class="col-sm-2 form-control" type="text" name="filterCountry" value="" id="filterCountry" placeholder="Country (XX)" />
+			<input class="col-sm-2 form-control" type="text" name="filterCountry" value="ru" id="filterCountry" placeholder="Country (XX)" />
 		</div>
 		<div class="form-group">
 			<label class="sr-only" for="filterMonth">Filter by</label>
@@ -218,7 +218,7 @@ body { padding-top: 50px; }
 		<div class="form-group">
 			<label class="col-sm-1 control-label" for="filterCountryDelay">Filter by</label>
 			<div class="col-sm-2">
-				<input class="form-control" type="text" name="filterCountryDelay" value="" id="filterCountryDelay" placeholder="Country" />
+				<input class="form-control" type="text" name="filterCountryDelay" value="ru" id="filterCountryDelay" placeholder="Country" />
 			</div>
 		</div>
 		
