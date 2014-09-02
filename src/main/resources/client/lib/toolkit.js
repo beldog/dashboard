@@ -25,18 +25,20 @@ function handleError(xhr, ajaxOptions, thrownError){
  */
 function showMessageOnConsole(xhr, ajaxOptions, errorMessage, type){
 	console.error(xhr.status +" / "+ xhr.responseText);
-	div = document.createElement("div");
-	
-	$(div).hover(function() {
-			$(this).stop(true, true)
-		}, 
-		function(){
+	if(xhr.status !== 200){
+		div = document.createElement("div");
+		
+		$(div).hover(function() {
+				$(this).stop(true, true)
+			}, 
+			function(){
+				$(this).delay(3000).fadeOut("slow", "linear");
+			});
+		
+		$("#console").append($(div).attr("class", "alert alert-"+ type).html(""+ errorMessage).fadeIn("fast", "linear", function(){
 			$(this).delay(3000).fadeOut("slow", "linear");
-		});
-	
-	$("#console").append($(div).attr("class", "alert alert-"+ type).html(""+ errorMessage).fadeIn("fast", "linear", function(){
-		$(this).delay(3000).fadeOut("slow", "linear");
-	}));
+		}));
+	}
 }
 
 
@@ -110,6 +112,24 @@ function updateEvent(project_id, event_id, data){
 		success: function (data) {
 			console.debug("Event updated cussessfully: "+ event_id);
 			showMessageOnConsole(XMLHttpRequest, null, "Event "+ event_id +" successfully updated", "success")
+		},
+		error: handleError
+	});
+
+}
+
+function createEvent(project_id, data) {
+	
+	var url = "/rest/report/events/"+ project_id;
+
+	$.ajax({
+		type: "POST",
+		url: url,
+		data: data, 
+		success: function(data)
+		{
+			getData("events", "#filterProjectId", "#excelEventsTable", true);
+			showMessageOnConsole(XMLHttpRequest, null, "New event successfully added to the project", "success")
 		},
 		error: handleError
 	});
@@ -197,20 +217,7 @@ function loadReportsActions(){
 function loadListeners(){
 	$("#eventForm").submit(function() {
 	
-		var url = "/rest/report/events/"+ $("#eventForm").find('#project_id').val();
-	
-		$.ajax({
-			type: "POST",
-			url: url,
-			data: $("#eventForm").serialize(), // serializes the form's elements.
-			success: function(data)
-			{
-				getData("events", "#filterProjectId", "#excelEventsTable", true);
-				showMessageOnConsole(XMLHttpRequest, null, "New event successfully added to the project", "success")
-			},
-			error: handleError
-		});
-	
+		createEvent($("#eventForm").find('#project_id').val(), $("#eventForm").serialize());
 		return false;
 	});
 }
@@ -348,7 +355,7 @@ var drawProjectsData = null;
 /**
  * Source: https://google-developers.appspot.com/chart/interactive/docs/gallery/timeline
  */
-function drawProjects(data) {
+function drawProjects2(data) {
 	var container = document.getElementById('timelinePlot');
 	var chart = new google.visualization.Timeline(container);
 	var dataTable = new google.visualization.DataTable();
@@ -396,6 +403,106 @@ function drawProjects(data) {
 	console.debug("plot height: "+ $("#timelinePlot").height());
 	
 	chart.draw(dataTable);
+}
+
+/**
+ * Source: http://almende.github.io/chap-links-library/timeline.html
+ */
+var classNamesEvents = {"AS": "boxAS", "Dev": "boxDev", "QA": "boxQA", "UAT": "boxUAT", "Launch": "boxLaunch", "E2E": "boxE2E"};
+
+function onChanged(){
+  var sel = timelinePlot.getSelection();
+  if (sel.length) {
+    if (sel[0].row != undefined) {
+      var row = sel[0].row;
+      console.debug("Timeline: event " + row + " selected");
+    }
+  }
+}
+
+function getSelectedRow() {
+    var row = undefined;
+    var sel = timeline.getSelection();
+    if (sel.length) {
+        if (sel[0].row != undefined) {
+            row = sel[0].row;
+        }
+    }
+    return row;
+}
+function drawProjects(data) {
+	var container = document.getElementById('timelinePlot');
+	var chart = new google.visualization.Timeline(container);
+	var dataTable = new google.visualization.DataTable();
+	
+	dataTable.addColumn({ type: 'date', id: 'start' });
+	dataTable.addColumn({ type: 'date', id: 'end' });
+	dataTable.addColumn({ type: 'string', id: 'content' });
+	dataTable.addColumn({ type: 'string', id: 'group' });
+	dataTable.addColumn({ type: 'boolean', id: 'editable' });
+	dataTable.addColumn({ type: 'string', id: 'className' });
+
+	var rows = 0;
+	var phases = [];
+	$.each(data, function (i, item) {
+        //console.debug(item);
+        var phase = [];
+        id = item.country +"-"+ item.ticket;
+        phase.push(new Date(item.startDate));
+        if(item.hasOwnProperty("endDate")) phase.push(new Date(item.endDate));
+        else phase.push(new Date());
+        phase.push(item.phase);
+        phase.push(id);
+        phase.push(true);
+        phase.push(classNamesEvents[item.phase]);
+        phases.push(phase);
+        
+        i++;
+        rows++;
+    });
+	
+	dataTable.addRows(phases);
+	
+	timeline = new links.Timeline(container);
+	
+	// callback function for the change event
+    var onchanged = function (event) {
+        // retrieve the changed row
+        var row = getSelectedRow();
+        console.debug(timeline.getSelection());
+        if (row != undefined) {
+            console.debug("Timline: event " + row + " changed");
+            console.debug(data[row]);
+            console.debug(timeline.getItem(row));
+            
+            var today = new Date();
+            var currentData = data[row];
+            var row = timeline.getItem(row);
+            var data2create = new Array();
+            
+            data2create.push({'name':'project_id', 'value': currentData['ticket']});
+            data2create.push({'name':'country', 'value': currentData['country']});
+            data2create.push({'name':'event', 'value': currentData['phase']});
+            data2create.push({'name':'type', 'value': 'info'});
+            data2create.push({'name':'project_type', 'value': 'Maintenance'});
+            data2create.push({'name':'impact', 'value': 0});
+            data2create.push({'name':'reason', 'value': ''});
+            data2create.push({'name':'date', 'value': today.getFullYear() +"-"+ today.getMonth()+1 +"-"+ today.getDate()});
+            data2create.push({'name':'timelines', 'value': row['end']});
+            
+            createEvent(currentData["ticket"], data2create);
+        }
+    };
+    
+    google.visualization.events.addListener(timeline, 'changed', onchanged);
+    
+    var options = {
+    	"style": "box",
+    	"editable": true
+	};
+	
+	timeline.setOptions(options);
+	timeline.draw(dataTable);
 }
 
 function plotTimeline(data){
