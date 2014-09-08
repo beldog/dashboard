@@ -44,13 +44,14 @@ public class ReportsTest {
 		String query = "INSERT INTO pm_project_event"
 				+ " (`country`,`project_type`,`project_id`,`date`,`type`,`event`,`impact`,`reason`,`timelines`) VALUES"
 				+ " ('RU', 'MIP', 'TEST', DATE(NOW()), 'info', 'Test', 0, 'Testing', 'PREE2E=&E2E=&UAT=&LAUNCH=')";
-		Dashboard.cn_write.prepareStatement(query).executeUpdate();
+		Dashboard.getConnection(true).prepareStatement(query).executeUpdate();
+		//Dashboard.getConnection(true).prepareStatement(query).executeUpdate();
 	}
 
 	@AfterClass
 	public static void oneTimeTearDown() throws Exception {
 		String query = "DELETE FROM pm_project_event WHERE project_id='TEST'";
-		Dashboard.cn_write.prepareStatement(query).executeUpdate();
+		Dashboard.getConnection(true).prepareStatement(query).executeUpdate();
 
 		server.stop();
 	}

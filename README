@@ -6,8 +6,19 @@ common: http://stackoverflow.com/
 charts: https://google-developers.appspot.com/chart/interactive/docs/gallery
 colors: http://www.colourlovers.com/color/FF9494/error_red
 MS Excel External source: http://office.microsoft.com/en-us/excel-help/overview-of-connecting-to-importing-data-HP010342748.aspx
-
+Bootstrap user guide: http://getbootstrap.com/css/ and http://getbootstrap.com/components/
+CHAP Links Timelines API: http://almende.github.io/chap-links-library/js/timeline/doc/ 
 
 Project creation:
 $ mvn archetype:generate -DarchetypeArtifactId=jersey-quickstart-grizzly2 -DarchetypeGroupId=org.glassfish.jersey.archetypes -DinteractiveMode=false -DgroupId=net.nuevegen.dashboard -DartifactId=dashboard -Dpackage=net.nuevegen.dashboard
 
+<h1>How to package and start</h1>
+1. Project package and install
+$ ant create_run_jar
+
+2. Update config.properties file with your data
+
+3. Start Server
+$ java -jar ./target/dashboard/dashboard.jar
+
+ 
